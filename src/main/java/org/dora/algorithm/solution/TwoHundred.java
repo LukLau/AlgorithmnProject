@@ -1490,32 +1490,35 @@ public class TwoHundred {
      */
     public int compareVersion(String version1, String version2) {
         if (version1 == null || version2 == null) {
-            return 0;
+            return -1;
         }
-        int i = 0;
-        int j = 0;
-        while (i < version1.length() || j < version2.length()) {
+        int v1 = 0;
+        int v2 = 0;
+        while (v1 < version1.length() || v2 < version2.length()) {
+            while (v1 < version1.length() && !Character.isDigit(version1.charAt(v1))) {
+                v1++;
+            }
+            while (v2 < version2.length() && !Character.isDigit(version2.charAt(v2))) {
+                v2++;
+            }
             int tmp1 = 0;
             int tmp2 = 0;
-            while (i < version1.length() && version1.charAt(i) != '.') {
-                tmp1 = tmp1 * 10 + version1.charAt(i) - '0';
-                i++;
+            while (v1 < version1.length() && Character.isDigit(version1.charAt(v1))) {
+                tmp1 = tmp1 * 10 + (version1.charAt(v1++) - '0');
             }
-            while (j < version2.length() && version2.charAt(j) != '.') {
-                tmp2 = tmp2 * 10 + version2.charAt(j) - '0';
-                j++;
+            while (v2 < version2.length() && Character.isDigit(version2.charAt(v2))) {
+                tmp2 = tmp2 * 10 + (version2.charAt(v2++) - '0');
             }
             if (tmp1 < tmp2) {
                 return -1;
             } else if (tmp1 > tmp2) {
                 return 1;
             } else {
-                i++;
-                j++;
+                v1++;
+                v2++;
             }
         }
         return 0;
-
     }
 
     /**
@@ -1698,8 +1701,29 @@ public class TwoHundred {
         if (prices == null || prices.length == 0) {
             return 0;
         }
-        int[] ans = new int[k];
-        return 0;
+
+        if (k >= prices.length / 2) {
+            return quickSolution(prices);
+        }
+        int[][] dp = new int[k + 1][prices.length];
+        for (int i = 1; i <= k; i++) {
+            int tmp = -prices[0];
+            for (int j = 1; j < prices.length; j++) {
+                dp[i][j] = Math.max(dp[i][j - 1], prices[j] + tmp);
+                tmp = Math.max(tmp, dp[i - 1][j - 1] - prices[j]);
+            }
+        }
+        return dp[k][prices.length - 1];
+    }
+
+    private int quickSolution(int[] prices) {
+        int result = 0;
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] > prices[i - 1]) {
+                result += prices[i] - prices[i - 1];
+            }
+        }
+        return result;
     }
 
     /**

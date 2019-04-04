@@ -21,15 +21,11 @@ public class Question {
     private int count = 0;
 
     public static void main(String[] args) {
-        List<String> wordDict = new ArrayList<>();
-        wordDict.add("cat");
-        wordDict.add("cats");
-        wordDict.add("and");
-        wordDict.add("sand");
-        wordDict.add("dog");
-        String s = "a good   example";
+
         Question question = new Question();
-        question.reverseWords(s);
+
+        int[][] matrix = new int[][]{{0, -3}};
+        question.calculateMinimumHP(matrix);
 
     }
 
@@ -2763,6 +2759,8 @@ public class Question {
 
 
     /**
+     * 165、Compare Version Numbers
+     *
      * @param version1
      * @param version2
      * @return
@@ -2795,5 +2793,156 @@ public class Question {
             }
         }
         return 0;
+    }
+
+    /**
+     * 174. Dungeon Game
+     *
+     * @param dungeon
+     * @return
+     */
+    public int calculateMinimumHP(int[][] dungeon) {
+        if (dungeon == null || dungeon.length == 0) {
+            return 0;
+        }
+        int row = dungeon.length;
+
+        int column = dungeon[0].length;
+
+        int[] dp = new int[column + 1];
+
+        dp[column - 1] = 1;
+
+        dp[column] = 1;
+
+        /**
+         * the last row initialization
+         * the last row is specially
+         * so we calculate the row alone;
+         */
+        for (int j = column - 1; j >= 0; j--) {
+            dp[j] = Math.max(1, dp[j + 1] - dungeon[row - 1][j]);
+        }
+        /**
+         * traverse the matrix
+         * from the row - 2 to 0 row;
+         */
+        for (int i = row - 1; i >= 0; i--) {
+            for (int j = column - 1; j >= 0; j--) {
+                /**
+                 * if the column is the right edge
+                 */
+                if (j == column - 1) {
+                    dp[j] = Math.max(1, dp[j] - dungeon[i][j]);
+                } else {
+                    dp[j] = Math.max(1, Math.min(dp[j], dp[j + 1]) - dungeon[i][j]);
+                }
+            }
+        }
+        return dp[0];
+    }
+
+    /**
+     * 189. Rotate Array
+     *
+     * @param nums
+     * @param k
+     */
+    public void rotate(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        reverseNums(nums, 0, nums.length - 1);
+        reverseNums(nums, 0, k - 1);
+        reverseNums(nums, k, nums.length - 1);
+    }
+
+    /**
+     * 198. House Robber
+     *
+     * @param nums
+     * @return
+     */
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int[] dp = new int[nums.length + 1];
+        for (int i = 1; i <= nums.length; i++) {
+            if (i == 1) {
+                dp[i] = Math.max(0, nums[i - 1]);
+            } else {
+                dp[i] = Math.max(dp[i - 2] + nums[i - 1], dp[i - 1]);
+            }
+        }
+        return dp[nums.length];
+    }
+
+    /**
+     * 199. Binary Tree Right Side View
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> rightSideView(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> ans = new ArrayList<>();
+        LinkedList<TreeNode> list = new LinkedList<>();
+        list.add(root);
+        while (!list.isEmpty()) {
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = list.pollFirst();
+                if (node.left != null) {
+                    list.add(node.left);
+                }
+                if (node.right != null) {
+                    list.add(node.right);
+                }
+                if (i == size - 1) {
+                    ans.add(node.val);
+                }
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 200. Number of Islands
+     *
+     * @param grid
+     * @return
+     */
+    public int numIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        int row = grid.length;
+        int column = grid[0].length;
+        boolean[][] used = new boolean[row][column];
+        int count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (check(used, i, j, grid)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private boolean check(boolean[][] used, int i, int j, char[][] grid) {
+        if (i < 0 || i >= grid.length || j < 0 || j >= grid[i].length || used[i][j] || grid[i][j] != '1') {
+            return false;
+        }
+        used[i][j] = true;
+        grid[i][j] = '0';
+        check(used, i - 1, j, grid);
+        check(used, i + 1, j, grid);
+        check(used, i, j - 1, grid);
+        check(used, i, j + 1, grid);
+        return true;
     }
 }
