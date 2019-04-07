@@ -6,7 +6,7 @@ package org.dora.algorithm.solution;
  */
 public class Trie {
 
-    TrieNode root;
+    private TrieNode root;
 
     /**
      * Initialize your data structure here.
@@ -21,12 +21,12 @@ public class Trie {
     public void insert(String word) {
         TrieNode p = root;
         for (int i = 0; i < word.length(); i++) {
-            if (p.nodes[word.charAt(i) - 'a'] == null) {
-                p.nodes[word.charAt(i) - 'a'] = new TrieNode();
+            if (p.nexts[word.charAt(i) - 'a'] == null) {
+                p.nexts[word.charAt(i) - 'a'] = new TrieNode();
             }
-            p = p.nodes[word.charAt(i) - 'a'];
+            p = p.nexts[word.charAt(i) - 'a'];
         }
-        p.hasWord = true;
+        p.word = word;
     }
 
     /**
@@ -35,12 +35,12 @@ public class Trie {
     public boolean search(String word) {
         TrieNode p = root;
         for (int i = 0; i < word.length(); i++) {
-            if (p.nodes[word.charAt(i) - 'a'] == null) {
+            if (p.nexts[word.charAt(i) - 'a'] == null) {
                 return false;
             }
-            p = p.nodes[word.charAt(i) - 'a'];
+            p = p.nexts[word.charAt(i) - 'a'];
         }
-        return p.hasWord;
+        return p.word.equals(word);
     }
 
     /**
@@ -49,20 +49,21 @@ public class Trie {
     public boolean startsWith(String prefix) {
         TrieNode p = root;
         for (int i = 0; i < prefix.length(); i++) {
-            if (p.nodes[prefix.charAt(i) - 'a'] == null) {
+            if (p.nexts[prefix.charAt(i) - 'a'] == null) {
                 return false;
             }
-            p = p.nodes[prefix.charAt(i) - 'a'];
+            p = p.nexts[prefix.charAt(i) - 'a'];
         }
         return true;
     }
 
     class TrieNode {
-        private TrieNode[] nodes;
-        private boolean hasWord;
+        private TrieNode[] nexts;
+        private String word;
 
-        public TrieNode() {
-            nodes = new TrieNode[26];
+        private TrieNode() {
+            nexts = new TrieNode[26];
+            word = "";
         }
     }
 }

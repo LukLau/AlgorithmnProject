@@ -6,7 +6,7 @@ package org.dora.algorithm.solution;
  */
 public class WordDictionary {
 
-    TrieNode root;
+    private TrieNode root;
 
     /**
      * Initialize your data structure here.
@@ -15,45 +15,41 @@ public class WordDictionary {
         root = new TrieNode();
     }
 
-    public static void main(String[] args) {
-        WordDictionary wordDictionary = new WordDictionary();
-        wordDictionary.addWord("bab");
-        wordDictionary.search("..b");
-    }
-
     /**
      * Adds a word into the data structure.
      */
     public void addWord(String word) {
         TrieNode p = root;
         for (int i = 0; i < word.length(); i++) {
-            if (p.nodes[word.charAt(i) - 'a'] == null) {
-                p.nodes[word.charAt(i) - 'a'] = new TrieNode();
+            if (p.next[word.charAt(i) - 'a'] == null) {
+                p.next[word.charAt(i) - 'a'] = new TrieNode();
             }
-            p = p.nodes[word.charAt(i) - 'a'];
+            p = p.next[word.charAt(i) - 'a'];
         }
-        p.item = word;
+        p.word = word;
     }
 
     /**
      * Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter.
      */
     public boolean search(String word) {
-        return match(word.toCharArray(), 0, root);
+        if (word.equals("")) {
+            return false;
+        }
+        return search(0, word, root);
     }
 
-    private boolean match(char[] chars, int k, TrieNode root) {
-        if (k == chars.length) {
-            return !root.item.equals("");
+    private boolean search(int i, String word, TrieNode root) {
+        if (i == word.length()) {
+            return !root.word.equals("");
         }
-        if (chars[k] != '.') {
-            return root.nodes[chars[k] - 'a'] != null && match(chars, k + 1, root.nodes[chars[k] - 'a']);
+        if (word.charAt(i) != '.') {
+            return root.next[word.charAt(i) - 'a'] != null && search(i + 1, word, root.next[word.charAt(i) - 'a']);
         } else {
-            for (int i = 0; i < root.nodes.length; i++) {
-                if (root.nodes[i] != null) {
-                    if (match(chars, k + 1, root.nodes[i])) {
-                        return true;
-                    }
+            for (int k = 0; k < root.next.length; k++) {
+                if (root.next[k] != null && search(i + 1, word, root.next[k])) {
+                    return true;
+
                 }
             }
             return false;
@@ -61,10 +57,12 @@ public class WordDictionary {
     }
 
     class TrieNode {
-        String item = "";
-        TrieNode[] nodes = new TrieNode[26];
+        private TrieNode[] next;
+        private String word;
 
         public TrieNode() {
+            next = new TrieNode[26];
+            word = "";
         }
     }
 }
