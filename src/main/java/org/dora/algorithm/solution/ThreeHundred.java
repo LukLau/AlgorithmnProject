@@ -1,5 +1,6 @@
 package org.dora.algorithm.solution;
 
+import org.dora.algorithm.datastructe.Interval;
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.TreeNode;
 
@@ -12,7 +13,10 @@ import java.util.*;
 public class ThreeHundred {
     public static void main(String[] args) {
         ThreeHundred threeHundred = new ThreeHundred();
-        threeHundred.isHappy(19);
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        threeHundred.binaryTreePaths(root);
     }
 
     /**
@@ -77,7 +81,6 @@ public class ThreeHundred {
         return root.next;
 
     }
-
 
     /**
      * 206. Reverse Linked List
@@ -270,7 +273,6 @@ public class ThreeHundred {
         return start;
     }
 
-
     /**
      * 231. Power of Two
      *
@@ -347,7 +349,6 @@ public class ThreeHundred {
         return true;
     }
 
-
     /**
      * 221. Maximal Square
      *
@@ -395,7 +396,7 @@ public class ThreeHundred {
      * @return
      */
     public int kthSmallest(TreeNode root, int k) {
-        if (root == null)  {
+        if (root == null) {
             return -1;
         }
         Stack<TreeNode> stack = new Stack<>();
@@ -415,7 +416,6 @@ public class ThreeHundred {
         }
         return -1;
     }
-
 
     /**
      * 235 Lowest Common Ancestor of a BST
@@ -487,6 +487,147 @@ public class ThreeHundred {
         }
         return result;
 
+    }
+
+    /**
+     * 242. Valid Anagram
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isAnagram(String s, String t) {
+        if (s == null || t == null) {
+            return false;
+        }
+        if (s.equals(t)) {
+            return true;
+        }
+        int m = s.length();
+        int n = t.length();
+        if (m != n) {
+            return false;
+        }
+        int[] hash = new int[256];
+        for (int i = 0; i < s.length(); i++) {
+            hash[s.charAt(i) - 'a']--;
+            hash[t.charAt(i) - 'a']++;
+        }
+        for (int i = 0; i < hash.length; i++) {
+            if (hash[i] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 243、Shortest Word Distance
+     *
+     * @param words
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public int shortestDistance(String[] words, String word1, String word2) {
+        if (words == null || words.length == 0) {
+            return -1;
+        }
+        int result = 0;
+        int first = -1;
+        int second = -1;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word1)) {
+                first = i;
+            } else if (words[i].equals(word2)) {
+                second = i;
+            }
+            if (first != -1 && second != -1) {
+                result = Math.min(result, Math.abs(first - second));
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * 257. Binary Tree Paths
+     *
+     * @param root
+     * @return
+     */
+    public List<String> binaryTreePaths(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+        dfs(ans, "", root);
+        return ans;
+    }
+
+    private void dfs(List<String> ans, String tmp, TreeNode root) {
+        tmp = tmp + root.val;
+
+        if (root.left == null && root.right == null) {
+            ans.add(tmp);
+            return;
+        }
+
+        if (root.left != null) {
+            dfs(ans, tmp + "->", root.left);
+        }
+        if (root.right != null) {
+            dfs(ans, tmp + "->", root.right);
+        }
+    }
+
+    /**
+     * 252、Meeting Rooms
+     *
+     * @param intervals
+     * @return
+     */
+    public boolean canAttendMeetings(List<Interval> intervals) {
+        if (intervals == null || intervals.isEmpty()) {
+            return false;
+        }
+        intervals.sort(new Comparator<Interval>() {
+            @Override
+            public int compare(Interval o1, Interval o2) {
+                return o1.start - o2.start;
+            }
+        });
+        for (int i = 1; i < intervals.size(); i++) {
+            if (intervals.get(i).start < intervals.get(i - 1).end) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 253、Meeting Rooms II
+     *
+     * @param intervals
+     * @return
+     */
+    public int minMeetingRooms(List<Interval> intervals) {
+        if (intervals == null || intervals.isEmpty()) {
+            return 0;
+        }
+        intervals.sort((o1, o2) -> o1.start - o2.start);
+        PriorityQueue<Interval> priorityQueue = new PriorityQueue<>((o1, o2) -> o1.end - o2.end);
+        priorityQueue.offer(intervals.get(0));
+        for (int i = 1; i < priorityQueue.size(); i++) {
+            Interval interval = priorityQueue.peek();
+            if (interval.end <= intervals.get(i).start) {
+                interval.end = intervals.get(i).end;
+            } else {
+                priorityQueue.offer(intervals.get(i));
+            }
+        }
+        return priorityQueue.size();
     }
 
 }

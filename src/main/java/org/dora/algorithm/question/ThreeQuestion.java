@@ -1,6 +1,7 @@
 package org.dora.algorithm.question;
 
 import org.dora.algorithm.datastructe.ListNode;
+import org.dora.algorithm.datastructe.TreeNode;
 import org.dora.algorithm.solution.Trie;
 
 import java.util.*;
@@ -10,6 +11,12 @@ import java.util.*;
  * @date 2019-04-05
  */
 public class ThreeQuestion {
+
+    public static void main(String[] args) {
+        ThreeQuestion threeQuestion = new ThreeQuestion();
+        int[] nums = new int[]{0, 1, 2, 4, 5, 7};
+        threeQuestion.summaryRanges(nums);
+    }
 
     /**
      * 201、Bitwise AND of Numbers Range
@@ -343,21 +350,434 @@ public class ThreeQuestion {
             return 0;
         }
         int row = matrix.length;
-
         int column = matrix[0].length;
-
-        int[][] dp = new int[row + 1][column + 1];
-
         int result = 0;
-
+        int[][] dp = new int[row + 1][column + 1];
         for (int i = 1; i <= row; i++) {
             for (int j = 1; j <= column; j++) {
                 if (matrix[i - 1][j - 1] == '1') {
-                    dp[i][j] = 1 + Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]);
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;
                     result = Math.max(result, dp[i][j]);
                 }
             }
         }
         return result * result;
     }
+
+    /**
+     * 222. Count Complete Tree Nodes
+     *
+     * @param root
+     * @return
+     */
+    public int countNodes(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = countNodesOfRoot(root, true);
+        int right = countNodesOfRoot(root, false);
+        if (left == right) {
+            return (1 << left) - 1;
+        }
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+
+    private int countNodesOfRoot(TreeNode root, boolean isLeft) {
+        if (root == null) {
+            return 0;
+        }
+        return (isLeft ? countNodesOfRoot(root.left, true) : countNodesOfRoot(root.right, false)) + 1;
+    }
+
+    /**
+     * 224. Basic Calculator
+     *
+     * @param s
+     * @return
+     */
+    public int calculate(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int result = 0;
+        int sign = 1;
+        for (int i = 0; i < s.length(); i++) {
+            int num = 0;
+            while (i < s.length() && Character.isDigit(s.charAt(i))) {
+                num = num * 10 + s.charAt(i++) - '0';
+            }
+            result += num * sign;
+            if (i < s.length()) {
+                if (s.charAt(i) == '+') {
+                    sign = 1;
+                } else if (s.charAt(i) == '-') {
+                    sign = -1;
+                } else if (s.charAt(i) == '(') {
+                    stack.push(result);
+                    stack.push(sign);
+                    sign = 1;
+                    result = 0;
+                } else if (s.charAt(i) == ')') {
+                    result = result * stack.pop() + stack.pop();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 228. Summary Ranges
+     *
+     * @param nums
+     * @return
+     */
+    public List<String> summaryRanges(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            int right = i;
+            while (right + 1 < nums.length && nums[right + 1] == nums[right] + 1) {
+                right++;
+            }
+            if (right - i > 0) {
+                String tmp = nums[i] + "->" + nums[right];
+                ans.add(tmp);
+                i = right;
+            } else if (right == i) {
+                String tmp = nums[i] + "";
+                ans.add(tmp);
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 229. Majority Element II
+     *
+     * @param nums
+     * @return
+     */
+    public List<Integer> majorityElement(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        int countA = 0;
+        int countB = 0;
+        int candidateA = nums[0];
+        int candidateB = nums[0];
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == candidateA) {
+                countA++;
+                continue;
+            }
+            if (nums[i] == candidateB) {
+                countB++;
+                continue;
+            }
+            if (candidateA == 0) {
+                candidateA = nums[i];
+                countA = 1;
+                continue;
+            }
+            if (candidateB == 0) {
+                candidateB = nums[i];
+                countB = 1;
+                continue;
+            }
+            countA--;
+            countB--;
+        }
+        countA = 0;
+        countB = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == candidateA) {
+                countA++;
+            } else if (nums[i] == candidateB) {
+                countB++;
+            }
+        }
+        List<Integer> ans = new ArrayList<>();
+        if (countA > nums.length / 3) {
+            ans.add(candidateA);
+        }
+        if (countB > nums.length / 3) {
+            ans.add(candidateB);
+        }
+        return ans;
+    }
+
+    /**
+     * 227. Basic Calculator II
+     *
+     * @param s
+     * @return
+     */
+    public int calculateII(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        s = s.trim();
+        char sign = '+';
+        int num = 0;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.isDigit(s.charAt(i))) {
+                num = num * 10 + s.charAt(i) - '0';
+                i++;
+            }
+            if ((!Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ') || i == s.length() - 1) {
+                if (sign == '+') {
+                    stack.push(num);
+                } else if (sign == '-') {
+                    stack.push(-num);
+                } else if (sign == '*') {
+                    stack.push(stack.pop() * num);
+                } else if (sign == '/') {
+                    stack.push(stack.pop() / num);
+                }
+                num = 0;
+                sign = s.charAt(i);
+            }
+        }
+
+        int result = 0;
+        for (int n : stack) {
+            result += n;
+        }
+        return result;
+    }
+
+    /**
+     * 230. Kth Smallest Element in a BST
+     *
+     * @param root
+     * @param k
+     * @return
+     */
+    public int kthSmallest(TreeNode root, int k) {
+        if (root == null) {
+            return -1;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        int count = 0;
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+            count++;
+            if (count == k) {
+                return p.val;
+            }
+            p = p.right;
+        }
+        return -1;
+    }
+
+    /**
+     * 234. Palindrome Linked List
+     *
+     * @param head
+     * @return
+     */
+    public boolean isPalindrome(ListNode head) {
+        if (head == null) {
+            return true;
+        }
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        slow.next = reverseList(slow.next);
+        slow = slow.next;
+        while (slow != null) {
+            if (head.val != slow.val) {
+                return false;
+            }
+            slow = slow.next;
+            head = head.next;
+        }
+        return true;
+    }
+
+    private ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode prev = null;
+        ListNode dummy = head;
+        while (dummy != null) {
+            ListNode tmp = dummy.next;
+            dummy.next = prev;
+            prev = dummy;
+            dummy = tmp;
+        }
+        return prev;
+    }
+
+    /**
+     * 235. Lowest Common Ancestor of a Binary Search Tree
+     *
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    public TreeNode lowestCommonAncestorBST(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == q || root == p) {
+            return root;
+        }
+        if (p.val < root.val && q.val < root.val) {
+            return lowestCommonAncestorBST(root.left, p, q);
+        } else if (p.val > root.val && q.val > root.val) {
+            return lowestCommonAncestorBST(root.right, p, q);
+        } else {
+            return root;
+        }
+    }
+
+    /**
+     * 236. Lowest Common Ancestor of a Binary Tree
+     *
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q) {
+            return root;
+        }
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if (left != null && right != null) {
+            return root;
+        }
+        return left != null ? left : right;
+    }
+
+    /**
+     * 237. Delete Node in a Linked List
+     *
+     * @param node
+     */
+    public void deleteNode(ListNode node) {
+        if (node.next != null && node.next.next != null) {
+            node.val = node.next.val;
+            node.next = node.next.next;
+        } else {
+            node.val = node.next.val;
+            node.next = null;
+        }
+    }
+
+    /**
+     * 238. Product of Array Except Self
+     *
+     * @param nums
+     * @return
+     */
+    public int[] productExceptSelf(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{};
+        }
+        int[] dp = new int[nums.length];
+        int base = 1;
+        for (int i = 0; i < nums.length; i++) {
+            dp[i] = base;
+            base *= nums[i];
+        }
+        base = 1;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            dp[i] *= base;
+            base *= nums[i];
+        }
+        return dp;
+    }
+
+    /**
+     * 240. Search a 2D Matrix II
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int i = 0;
+        int j = column - 1;
+        while (i < row && j >= 0) {
+            if (matrix[i][j] == target) {
+                return true;
+            } else if (matrix[i][j] < target) {
+                i++;
+            } else {
+                j--;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 241. Different Ways to Add Parentheses
+     *
+     * @param input
+     * @return
+     */
+    public List<Integer> diffWaysToCompute(String input) {
+        if (input == null || input.length() == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ops = new ArrayList<>();
+        for (int i = 0; i < input.length(); i++) {
+            int j = i;
+            while (i < input.length() && Character.isDigit(input.charAt(i))) {
+                i++;
+            }
+            ops.add(input.substring(j, i));
+            if (i != input.length()) {
+                ops.add(input.substring(i, i + 1));
+            }
+        }
+        return compute(ops, 0, ops.size() - 1);
+    }
+
+    private List<Integer> compute(List<String> ops, int start, int end) {
+        List<Integer> ans = new ArrayList<>();
+        if (start == end) {
+            Integer value = Integer.parseInt(ops.get(start));
+            ans.add(value);
+            return ans;
+        }
+        for (int i = start + 1; i <= end - 1; i = i + 2) {
+            List<Integer> leftNum = compute(ops, start, i - 1);
+            List<Integer> rightNum = compute(ops, i + 1, end);
+            String sign = ops.get(i);
+            for (Integer left : leftNum) {
+                for (Integer right : rightNum) {
+                    if (sign.equals("+")) {
+                        ans.add(left + right);
+                    } else if (sign.equals("-")) {
+                        ans.add(left - right);
+                    } else if (sign.equals("*")) {
+                        ans.add(left * right);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+
 }

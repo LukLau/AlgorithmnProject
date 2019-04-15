@@ -1,5 +1,8 @@
 package org.dora.algorithm;
 
+import org.dora.algorithm.datastructe.ListNode;
+import org.dora.algorithm.datastructe.TreeNode;
+
 import java.util.HashMap;
 
 /**
@@ -135,5 +138,206 @@ public class InterviewAlgorithm {
         }
         return result;
     }
+
+    /**
+     * 有序链表 组成 BST树
+     *
+     * @param head
+     * @return
+     */
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        return buildBST(head, null);
+    }
+
+    private TreeNode buildBST(ListNode head, ListNode end) {
+        if (head == end) {
+            return null;
+        }
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != end && fast.next != end) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        TreeNode root = new TreeNode(slow.val);
+        root.left = buildBST(head, slow);
+        root.right = buildBST(slow.next, end);
+        return root;
+    }
+
+    /**
+     * 排序数组中查找中位数
+     *
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public double findMediaSortedArray(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums2 == null) {
+            return 0;
+        }
+        int m = nums1.length;
+        int n = nums2.length;
+        if (m < n) {
+            return findMediaSortedArray(nums2, nums1);
+        }
+        int imin = 0;
+        int imax = nums1.length;
+        int left = 0;
+        int right = 0;
+        while (imin <= imax) {
+            int i = imin + (imax - imin) / 2;
+            int j = (m + n + 1) / 2 - i;
+            if (i < imax && nums1[i] < nums2[j - 1]) {
+                imin = i + 1;
+            } else if (i > 0 && nums1[i - 1] > nums2[j]) {
+                imax = i - 1;
+            } else {
+                if (i == 0) {
+                    left = nums2[j - 1];
+                } else if (j == 0) {
+                    left = nums1[i - 1];
+                } else {
+                    left = Math.max(nums1[i - 1], nums2[j - 1]);
+                }
+                if ((m + n) % 1 != 0) {
+                    return left;
+                }
+                if (i == m) {
+                    right = nums2[j];
+                } else if (j == n) {
+                    right = nums1[i];
+                } else {
+                    right = Math.min(nums1[i], nums1[j]);
+                }
+                return (left + right) / 2.0;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 最长无重复字串
+     * 有三种解法
+     *
+     * @param s
+     * @return
+     */
+    public String longestPalindrome(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        int m = s.length();
+        int left = 0;
+        int len = 0;
+        boolean[][] dp = new boolean[m][m];
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (i - j < 2) {
+                    dp[j][i] = s.charAt(i) == s.charAt(j);
+                } else {
+                    dp[j][i] = s.charAt(i) == s.charAt(j) && dp[j + 1][i - 1];
+                }
+                if (dp[j][i] && i - j + 1 > len) {
+                    left = j;
+                    len = i - j + 1;
+                }
+            }
+        }
+        if (len > 0) {
+            return s.substring(left, left + len);
+        }
+        return s;
+    }
+
+    /**
+     * 正则表达式匹配
+     *
+     * @param s
+     * @param p
+     * @return
+     */
+    public boolean isMatch(String s, String p) {
+        if (s == null && p == null) {
+            return false;
+        } else if (s == null) {
+            return true;
+        }
+        int m = s.length();
+        int n = p.length();
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+        for (int j = 1; j <= n; j++) {
+            dp[0][j] = p.charAt(j - 1) == '*' && dp[0][j - 2];
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p.charAt(j - 1) == s.charAt(i - 1) || p.charAt(j - 1) == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p.charAt(j - 1) == '*') {
+                    if (s.charAt(i - 1) != p.charAt(j - 1) && p.charAt(j - 2) != '.') {
+                        dp[i][j] = dp[i][j - 2];
+                    } else {
+                        dp[i][j] = dp[i - 1][j] || dp[i][j - 1] || dp[i][j - 2];
+                    }
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    /**
+     * 魔法匹配
+     *
+     * @param s
+     * @param p
+     * @return
+     */
+    public boolean isMatchII(String s, String p) {
+        if (s == null && p == null) {
+            return false;
+        } else if (s == null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断二叉搜索树后序遍历是否正确
+     *
+     * @param sequence
+     * @return
+     */
+    public boolean VerifySquenceOfBST(int[] sequence) {
+        if (sequence == null || sequence.length == 0) {
+            return false;
+        }
+        return VerifySquenceOfBST(sequence, 0, sequence.length - 1);
+    }
+
+    private boolean VerifySquenceOfBST(int[] sequence, int start, int end) {
+        if (start == end) {
+            return true;
+        }
+        int tmp = start;
+        while (tmp < end && sequence[tmp] < sequence[end]) {
+            tmp++;
+        }
+        int mid = tmp;
+        while (mid < end && sequence[mid] > sequence[end]) {
+            mid++;
+        }
+        if (mid < end) {
+            return false;
+        }
+        if (tmp == start || mid == end) {
+            return true;
+        }
+        return VerifySquenceOfBST(sequence, start, tmp - 1) && VerifySquenceOfBST(sequence, tmp, end - 1);
+    }
+
 
 }

@@ -11,6 +11,12 @@ import java.util.*;
  * @date 2019-03-17
  */
 public class Question {
+    private ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
 
     /**
      * 52. N-Queens II
@@ -425,7 +431,7 @@ public class Question {
         }
         int left = 0;
         int right = nums.length - 1;
-        while (left < right) {
+        while (left <= right) {
             int mid = left + (right - left) / 2;
             if (nums[mid] == target) {
                 return mid;
@@ -443,7 +449,7 @@ public class Question {
                 }
             }
         }
-        return nums[left] == target ? -1 : left;
+        return -1;
     }
 
     /**
@@ -457,33 +463,76 @@ public class Question {
         if (nums == null || nums.length == 0) {
             return new int[2];
         }
-        int left = 0;
-        int right = nums.length - 1;
-        int[] ans = new int[2];
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-            if (nums[mid] < target) {
-                right = mid + 1;
-            } else {
-                right = mid;
-            }
-        }
-        if (nums[left] != target) {
+//        int left = 0;
+//        int right = nums.length - 1;
+//        int[] ans = new int[2];
+//        while (left < right) {
+//            int mid = left + (right - left) / 2;
+//            if (nums[mid] < target) {
+//                right = mid + 1;
+//            } else {
+//                right = mid;
+//            }
+//        }
+//        ans[0] = left;
+//        right = nums.length - 1;
+//        while (left < right) {
+//            int mid = left + (right - left) / 2;
+//            if (nums[mid] < target) {
+//                right = mid + 1;
+//            } else {
+//                right = mid;
+//            }
+//        }
+//        ans[1] = right;
+        int left = searchRangeLeft(nums, target, 0, nums.length - 1);
+        int right = searchRangeRight(nums, target, 0, nums.length - 1);
+        if (left != -1 && right != -1) {
+            int[] ans = new int[]{left, right};
             return ans;
         }
-        ans[0] = left;
-        right = nums.length - 1;
-        while (left < right) {
-            int mid = left + (right - left) / 2;
+        return new int[]{};
+    }
+
+    private int searchRangeRight(int[] nums, int target, int start, int end) {
+        if (start > end) {
+            return -1;
+        }
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+
             if (nums[mid] < target) {
-                right = mid + 1;
+                start = mid + 1;
+            } else if (nums[mid] > target) {
+                end = mid - 1;
+            } else if (mid < nums.length - 1 && nums[mid + 1] == target) {
+                start = mid + 1;
             } else {
-                right = mid;
+                return mid;
             }
         }
-        ans[1] = right;
-        return ans;
+        return -1;
     }
+
+    private int searchRangeLeft(int[] nums, int target, int start, int end) {
+        if (start > end) {
+            return -1;
+        }
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (nums[mid] < target) {
+                start = mid + 1;
+            } else if (nums[mid] > target) {
+                end = mid - 1;
+            } else if (mid - 1 >= 0 && nums[mid - 1] == target) {
+                end = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
+    }
+
 
     /**
      * 35. Search Insert Position
@@ -1381,45 +1430,48 @@ public class Question {
         if (matrix == null || matrix.length == 0) {
             return 0;
         }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int[] left = new int[column];
+        int[] right = new int[column];
+        int[] height = new int[column];
+
         int result = 0;
 
-        int m = matrix.length;
-        int n = matrix[0].length;
-        int[] left = new int[n];
-        int[] right = new int[n];
-        for (int j = 0; j < n; j++) {
-            right[j] = n;
+        for (int j = 0; j < column; j++) {
+            right[j] = column;
         }
-        int[] height = new int[n];
-        for (int i = 0; i < m; i++) {
-            int maxLeft = 0;
-            int minRight = n;
-            for (int j = 0; j < n; j++) {
+
+        for (int i = 0; i < row; i++) {
+            int leftSide = 0;
+
+            int rightSide = column;
+
+            for (int j = 0; j < column; j++) {
                 if (matrix[i][j] == '1') {
                     height[j]++;
                 } else {
                     height[j] = 0;
                 }
             }
-
-            for (int j = 0; j < n; j++) {
+            for (int j = 0; j < column; j++) {
                 if (matrix[i][j] == '1') {
-                    left[j] = Math.max(left[j], maxLeft);
+                    left[j] = Math.max(left[j], leftSide);
                 } else {
                     left[j] = 0;
-                    maxLeft = j + 1;
+                    leftSide = j + 1;
                 }
             }
-            for (int j = n - 1; j >= 0; j--) {
+            for (int j = column - 1; j >= 0; j--) {
                 if (matrix[i][j] == '1') {
-                    right[j] = Math.min(right[j], minRight);
+                    right[j] = Math.min(right[j], rightSide);
                 } else {
-                    right[j] = n;
-                    minRight = j;
+                    right[j] = column;
+                    rightSide = j;
                 }
             }
-            for (int j = 0; j < n; j++) {
-                result = Math.max(result, (right[j] - left[j]) * height[j]);
+            for (int j = 0; j < column; j++) {
+                result = Math.max(result, height[j] * (right[j] - left[j]));
             }
         }
         return result;
@@ -2253,7 +2305,7 @@ public class Question {
             return new ArrayList<>();
         }
         List<List<String>> ans = new ArrayList<>();
-        partition(ans, new ArrayList<String>(), 0, s);
+        partition(ans, new ArrayList<>(), 0, s);
         return ans;
     }
 
@@ -2276,14 +2328,40 @@ public class Question {
             return false;
         }
         while (start < end) {
-            if (s.charAt(start) == s.charAt(end)) {
-                start++;
-                end--;
-            } else {
+            if (s.charAt(start) != s.charAt(end)) {
                 return false;
             }
+            start++;
+            end--;
         }
         return true;
+    }
+
+    /**
+     * 132. Palindrome Partitioning II
+     *
+     * @param s
+     * @return
+     */
+    public int minCut(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+        int[] cut = new int[n];
+        for (int i = 0; i < n; i++) {
+            int min = i;
+            int j = 0;
+            while (j <= i) {
+                if (s.charAt(j) == s.charAt(i) && (i - j < 2 || dp[j + 1][i - 1])) {
+                    dp[j][i] = true;
+                    min = j == 0 ? 0 : Math.min(min, cut[j - 1] + 1);
+                }
+                j++;
+            }
+        }
+        return cut[n - 1];
     }
 
     /**
