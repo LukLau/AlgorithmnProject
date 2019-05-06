@@ -787,6 +787,29 @@ public class ThreePage {
         if (nums == null || nums.length == 0) {
 
         }
+        LinkedList<Integer> ans = new LinkedList<>();
+
+        List<Integer> data = new ArrayList<>();
+
+
+        for (int i = 0; i < nums.length; i++) {
+            int begin = i - k + 1;
+
+            if (ans.isEmpty()) {
+                ans.addLast(i);
+            } else if (begin > ans.peekFirst()) {
+                ans.removeFirst();
+            }
+            while (!ans.isEmpty() && nums[ans.peekFirst()] <= nums[i]) {
+                ans.pollFirst();
+            }
+            ans.add(i);
+            if (begin >= 0) {
+                data.add(nums[ans.peekFirst()]);
+            }
+
+        }
+
         return nums;
     }
 
@@ -818,8 +841,112 @@ public class ThreePage {
         return false;
     }
 
+    /**
+     * 242. Valid Anagram
+     *
+     * @param input
+     * @return
+     */
     public List<Integer> diffWaysToCompute(String input) {
-        return null;
+        if (input == null || input.length() == 0) {
+            return new ArrayList<>();
+        }
+        List<String> data = new ArrayList<>();
+        for (int i = 0; i < input.length(); i++) {
+            int j = i;
+            while (i < input.length() && Character.isDigit(i)) {
+                i++;
+            }
+            data.add(input.substring(j, i));
+            if (i != input.length()) {
+                data.add(input.substring(i, i + 1));
+            }
+        }
+        return this.compute(data, 0, data.size() - 1);
+    }
+
+    private List<Integer> compute(List<String> ops, int start, int end) {
+        List<Integer> ans = new ArrayList<>();
+        if (start == end) {
+            int value = Integer.parseInt(ops.get(start));
+            ans.add(value);
+            return ans;
+        }
+        for (int i = start + 1; i <= end - 1; i = i + 2) {
+            List<Integer> leftNum = this.compute(ops, start, i - 1);
+            List<Integer> rightNum = this.compute(ops, i + 1, end);
+            String sign = ops.get(i);
+            for (Integer left : leftNum) {
+                for (Integer right : rightNum) {
+                    if (sign.equals("+")) {
+                        ans.add(left + right);
+                    } else if (sign.equals("-")) {
+                        ans.add(left - right);
+                    } else if (sign.equals("*")) {
+                        ans.add(left * right);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 242. Valid Anagram
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isAnagram(String s, String t) {
+        if (s == null || t == null) {
+            return false;
+        }
+        if (s.length() != t.length()) {
+            return false;
+        }
+        int[] hash = new int[256];
+        for (int i = 0; i < s.length(); i++) {
+            hash[s.charAt(i) - 'a']--;
+            hash[t.charAt(i) - 'a']++;
+        }
+        for (int i = 0; i < hash.length; i++) {
+            if (hash[i] != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * 300. Longest Increasing Subsequence
+     *
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int[] dp = new int[nums.length];
+        for (int i = 0; i < dp.length; i++) {
+            dp[i] = 1;
+        }
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i] && dp[j] + 1 > dp[i]) {
+                    dp[i] = 1 + dp[j];
+                }
+            }
+        }
+        int result = 0;
+        for (int num : dp) {
+            result = Math.max(result, num);
+        }
+        return result;
+
+
     }
 
 

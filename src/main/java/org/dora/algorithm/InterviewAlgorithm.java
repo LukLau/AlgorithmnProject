@@ -10,6 +10,11 @@ import java.util.HashMap;
  */
 public class InterviewAlgorithm {
 
+    public static void main(String[] args) {
+        InterviewAlgorithm interviewAlgorithm = new InterviewAlgorithm();
+        System.out.println(interviewAlgorithm.lengthOfLongestSubstringKDistinct("abbcda", 2));
+    }
+
     /**
      * 0-1背包问题
      *
@@ -110,7 +115,7 @@ public class InterviewAlgorithm {
     }
 
     /**
-     * 字符串中最长无重复K个字符
+     * 字符串中最长无K个子串
      *
      * @param s
      * @param k
@@ -121,18 +126,34 @@ public class InterviewAlgorithm {
             return 0;
         }
         int result = 0;
-        HashMap<Character, Integer> map = new HashMap<>();
+
         int left = 0;
-        for (int i = 0; i < s.length(); i++) {
-            map.put(s.charAt(i), i);
+
+        int end = 0;
+
+
+        HashMap<Character, Integer> map = new HashMap<>();
+        while (end < s.length()) {
+            int num = map.getOrDefault(s.charAt(end), 0);
+
+            map.put(s.charAt(end), ++num);
+
             while (map.size() > k) {
-                if (map.get(s.charAt(i)) == left) {
-                    map.remove(s.charAt(i));
+                int edge = map.getOrDefault(s.charAt(left), 0);
+                edge--;
+                if (edge == 0) {
+                    map.remove(s.charAt(left));
+                } else {
+                    map.put(s.charAt(left), edge);
                 }
                 left++;
+
             }
-            result = Math.max(result, i - left + 1);
+
+            result = Math.max(result, end - left + 1);
         }
+
+
         return result;
     }
 

@@ -56,13 +56,37 @@ public class VipPage {
 
     /**
      * 159、Longest Substring with At Most Two Distinct Characters
+     * <a href="http://www.cnblogs.com/grandyang/p/5185561.html>最大两个差异字符</a>
      * todo 滑动窗口 不懂
      *
      * @param s
      * @return
      */
     public int lengthOfLongestSubstringTwoDistinct(String s) {
-        int left = 0, right = -1, res = 0;
+
+        int left = 0;
+        int end = 0;
+        int result = 0;
+        HashMap<Character, Integer> map = new HashMap<>();
+        while (end < s.length()) {
+
+            int count = map.getOrDefault(s.charAt(end), 0);
+
+            map.put(s.charAt(end++), ++count);
+
+            while (map.size() > 2) {
+                int num = map.getOrDefault(s.charAt(left), 0);
+
+                --num;
+                if (num == 0) {
+                    map.remove(s.charAt(left));
+                    left++;
+                } else {
+                    map.put(s.charAt(left), num);
+                }
+            }
+            result = Math.max(result, end - left);
+        }
 //        for (int i = 1; i < s.length(); ++i) {
 //            if (s[i] == s[i - 1]) {
 //                continue;
@@ -73,7 +97,7 @@ public class VipPage {
 //            }
 //            right = i - 1;
 //        }
-        return Math.max(s.length() - left, res);
+        return Math.max(s.length() - left, result);
     }
 
     /**
@@ -304,6 +328,66 @@ public class VipPage {
             result <<= 1;
         }
         return result;
+    }
+
+
+    /**
+     * 243、Shortest Word Distance
+     * <a href="https://www.cnblogs.com/grandyang/p/5187041.html">最短单词距离</a>
+     *
+     * @param words
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public int shortestDistance(String[] words, String word1, String word2) {
+        if (words == null || words.length == 0) {
+            return -1;
+        }
+        int index1 = -1;
+        int index2 = -1;
+        int result = 0;
+        for (int i = 0; i < words.length; i++) {
+            if (word1.equals(words[i])) {
+                index1 = i;
+            } else if (word2.equals(words[i])) {
+                index2 = i;
+            }
+            if (index1 != -1 && index2 != -1) {
+                result = Math.max(result, Math.abs(index1 - index2));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 255、Verify Preorder Sequence in Binary Search Tree
+     * <a href="http://www.cnblogs.com/grandyang/p/5327635.html">验证二叉树的先序遍历</a>
+     *
+     * @param preorder
+     * @return
+     */
+    public boolean verifyPreorder(int[] preorder) {
+        if (preorder == null || preorder.length == 0) {
+            return false;
+        }
+        int size = preorder.length - 1;
+
+
+        while (size > 0) {
+            int tmp = size;
+            while (tmp > 0 && preorder[tmp] > preorder[0]) {
+                tmp--;
+            }
+            while (tmp > 0 && preorder[tmp] < preorder[0]) {
+                tmp--;
+            }
+            if (tmp != 0) {
+                return false;
+            }
+            size--;
+        }
+        return true;
     }
 
 
