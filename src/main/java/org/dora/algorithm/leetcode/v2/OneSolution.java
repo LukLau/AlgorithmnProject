@@ -1426,5 +1426,451 @@ public class OneSolution {
         return reach >= nums.length - 1;
     }
 
+    /**
+     * 56. Merge Intervals
+     *
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return new int[][]{};
+        }
+        return null;
+    }
+
+    /**
+     * 58. Length of Last Word
+     *
+     * @param s
+     * @return
+     */
+    public int lengthOfLastWord(String s) {
+        if (s == null) {
+            return 0;
+        }
+        s = s.trim();
+        return s.length() - 1 - s.lastIndexOf(" ");
+    }
+
+
+    /**
+     * 59. Spiral Matrix II
+     *
+     * @param n
+     * @return
+     */
+    public int[][] generateMatrix(int n) {
+        if (n <= 0) {
+
+            return new int[][]{};
+
+        }
+
+
+        int[][] matrix = new int[n][n];
+
+
+        int left = 0;
+
+
+        int right = n - 1;
+
+
+        int top = 0;
+
+        int bottom = n - 1;
+
+        int total = 0;
+
+        while (left <= right && top <= bottom) {
+            for (int i = left; i <= right; i++) {
+                matrix[top][i] = ++total;
+            }
+            for (int i = top + 1; i <= bottom; i++) {
+                matrix[i][right] = ++total;
+            }
+            if (top != bottom) {
+                for (int i = right - 1; i >= left; i--) {
+                    matrix[bottom][i] = ++total;
+                }
+            }
+            if (left != right) {
+                for (int i = bottom - 1; i > top; i--) {
+                    matrix[i][left] = ++total;
+                }
+            }
+            left++;
+            right--;
+            top++;
+            bottom--;
+        }
+        return matrix;
+    }
+
+    /**
+     * 60. Permutation Sequence
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public String getPermutation(int n, int k) {
+        if (n <= 0) {
+            return "";
+        }
+
+        List<Integer> numbers = new ArrayList<>();
+
+        for (int i = 1; i <= n; i++) {
+            numbers.add(i);
+        }
+        int[] base = new int[n + 1];
+        base[0] = 1;
+        int factory = 1;
+
+        return "";
+    }
+
+
+    /**
+     * 61. Rotate List
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode fast = head;
+        int count = 1;
+        while (fast.next != null) {
+            fast = fast.next;
+            count++;
+        }
+        fast.next = head;
+        ListNode slow = head;
+        if ((k %= count) != 0) {
+            for (int i = 0; i < count - k; i++) {
+
+                fast = fast.next;
+
+                slow = slow.next;
+            }
+        }
+        fast.next = null;
+        return slow;
+
+    }
+
+
+    /**
+     * 62. Unique Paths
+     *
+     * @param m
+     * @param n
+     * @return
+     */
+    public int uniquePaths(int m, int n) {
+        if (m == 0 && n == 0) {
+            return 0;
+        }
+        int[] dp = new int[n];
+
+        dp[0] = 1;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[j] = dp[j] + (j > 0 ? dp[j - 1] : 0);
+            }
+        }
+        return dp[n - 1];
+    }
+
+
+    /**
+     * 63. Unique Paths II
+     *
+     * @param obstacleGrid
+     * @return
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if (obstacleGrid == null || obstacleGrid.length == 0) {
+            return 0;
+        }
+        int row = obstacleGrid.length;
+
+        int column = obstacleGrid[0].length;
+
+        int[] dp = new int[column];
+
+        dp[0] = 1;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    dp[j] = 0;
+                } else {
+                    dp[j] = dp[j] + (j > 0 ? dp[j - 1] : 0);
+                }
+            }
+        }
+        return dp[column - 1];
+    }
+
+    /**
+     * 64. Minimum Path Sum
+     *
+     * @param grid
+     * @return
+     */
+    public int minPathSum(int[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        int row = grid.length;
+
+        int column = grid[0].length;
+
+        int[][] dp = new int[row][column];
+
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (i == 0 && j == 0) {
+                    dp[i][j] = grid[0][0];
+                } else if (i == 0) {
+                    dp[i][j] = dp[i][j - 1] + grid[i][j];
+                } else if (j == 0) {
+                    dp[i][j] = dp[i - 1][j] + grid[i][j];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+                }
+            }
+        }
+        return dp[row - 1][column - 1];
+    }
+
+
+    /**
+     * todo
+     * 65. Valid Number
+     *
+     * @param s
+     * @return
+     */
+    public boolean isNumber(String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 66. Plus One
+     *
+     * @param digits
+     * @return
+     */
+    public int[] plusOne(int[] digits) {
+        if (digits == null || digits.length == 0) {
+            return new int[]{};
+        }
+        for (int i = digits.length - 1; i >= 0; i--) {
+            if (digits[i] == 9) {
+                digits[i] = 0;
+            } else {
+                digits[i]++;
+                return digits;
+            }
+        }
+
+        int[] ans = new int[digits.length + 1];
+
+        ans[0] = 1;
+
+        return ans;
+    }
+
+
+    /**
+     * 67. Add Binary
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public String addBinary(String a, String b) {
+
+        int m = a.length() - 1;
+
+        int n = b.length() - 1;
+
+        int carry = 0;
+
+        String ans = "";
+
+        while (m >= 0 || n >= 0 || carry != 0) {
+            int value = (m >= 0 ? a.charAt(m--) - '0' : 0) + (n >= 0 ? b.charAt(n--) - '0' : 0) + carry;
+
+            carry = value / 2;
+
+            ans = String.valueOf(value % 2) + ans;
+        }
+        return ans;
+    }
+
+
+    /**
+     * 68. Text Justification
+     *
+     * @param words
+     * @param maxWidth
+     * @return
+     */
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        if (words == null || words.length == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+        int startIndex = 0;
+        while (startIndex < words.length) {
+
+            int endIndex = startIndex;
+
+            int line = 0;
+            while (endIndex < words.length && line + words[endIndex].length() <= maxWidth) {
+                line += words[endIndex].length() + 1;
+                endIndex++;
+            }
+
+            boolean lastRow = endIndex == words.length;
+
+            int countOfWord = endIndex - startIndex;
+
+            StringBuilder sb = new StringBuilder();
+
+            if (countOfWord == 1) {
+                sb.append(words[startIndex]);
+            } else {
+                int space = lastRow ? 1 : 1 + (maxWidth - line + 1) / (countOfWord - 1);
+                int extraSpace = lastRow ? 0 : (maxWidth - line + 1) % (countOfWord - 1);
+                sb.append(this.constructRow(words, startIndex, endIndex, space, extraSpace));
+            }
+
+            startIndex = endIndex;
+
+            ans.add(this.justifyLength(sb.toString(), maxWidth));
+        }
+        return ans;
+    }
+
+    private String justifyLength(String str, int maxWidth) {
+        while (str.length() > maxWidth) {
+            str = str.substring(0, str.length() - 1);
+        }
+        while (str.length() < maxWidth) {
+            str = str + " ";
+        }
+        return str;
+    }
+
+    private String constructRow(String[] words, int startIndex, int endIndex, int space, int extraSpace) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = startIndex; i < endIndex; i++) {
+            sb.append(words[i]);
+            int tmp = space;
+            while (tmp-- > 0) {
+                sb.append(" ");
+            }
+            if (extraSpace > 0) {
+                sb.append(" ");
+                extraSpace--;
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 69. Sqrt(x)
+     *
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        double result = x;
+        double precision = 0.00001;
+        while ((result * result - x) > precision) {
+            result = (result + x / result) / 2;
+        }
+        return (int) result;
+    }
+
+    /**
+     * 70. Climbing Stairs
+     *
+     * @param n
+     * @return
+     */
+    public int climbStairs(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+
+        if (n <= 2) {
+            return n;
+        }
+
+        int num1 = 1;
+
+        int num2 = 2;
+
+        int sum = 0;
+
+        for (int i = 3; i <= n; i++) {
+
+            sum = num1 + num2;
+
+            num1 = num2;
+
+            num2 = sum;
+        }
+        return sum;
+    }
+
+
+    /**
+     * 71. Simplify Path
+     *
+     * @param path
+     * @return
+     */
+    public String simplifyPath(String path) {
+        if (path == null || path.length() == 0) {
+            return "";
+        }
+        String[] items = path.split("/");
+        List<String> skip = Arrays.asList("", "/", ".", "..");
+        Stack<String> stack = new Stack<>();
+        for (String item : items) {
+            if ("..".equals(item) && !stack.isEmpty()) {
+                stack.pop();
+            } else if (skip.contains(item)) {
+                continue;
+            } else {
+                stack.add(item);
+            }
+        }
+        if (stack.isEmpty()) {
+            return "/";
+        }
+        String sb = "";
+        while (!stack.isEmpty()) {
+            sb = "/" + stack.pop() + sb;
+        }
+        return sb;
+
+    }
+
 
 }
