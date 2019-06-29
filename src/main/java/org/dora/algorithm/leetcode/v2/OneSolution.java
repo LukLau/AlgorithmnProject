@@ -1872,5 +1872,288 @@ public class OneSolution {
 
     }
 
+    /**
+     * 72. Edit Distance
+     *
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public int minDistance(String word1, String word2) {
+        if (word1 == null || word2 == null) {
+            return 0;
+        }
+        int m = word1.length();
+
+        int n = word2.length();
+
+        int[][] dp = new int[m + 1][n + 1];
+
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i == 0 && j == 0) {
+                    dp[i][j] = 0;
+                } else if (j == 0) {
+                    dp[i][j] = 1 + dp[i - 1][j];
+                } else if (i == 0) {
+                    dp[i][j] = 1 + dp[i][j - 1];
+                } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(Math.min(dp[i][j - 1], dp[i - 1][j]), dp[i - 1][j - 1]) + 1;
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+
+    /**
+     * 73. Set Matrix Zeroes
+     *
+     * @param matrix
+     */
+    public void setZeroes(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return;
+        }
+        boolean setRow = false;
+        boolean setColumn = false;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+
+                    matrix[i][0] = 0;
+
+                    matrix[0][j] = 0;
+
+                    if (i == 0) {
+                        setColumn = true;
+                    }
+                    if (j == 0) {
+                        setRow = true;
+                    }
+                }
+            }
+        }
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+
+        if (setRow) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+        if (setColumn) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                matrix[0][j] = 0;
+            }
+        }
+    }
+
+    /**
+     * 74. Search a 2D Matrix
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int i = row - 1;
+        int j = 0;
+        while (i >= 0 && j < column) {
+            if (matrix[i][j] == target) {
+                return true;
+            } else if (matrix[i][j] < target) {
+                j++;
+            } else {
+                i--;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * todo
+     * 75. Sort Colors
+     *
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        int red = 0;
+        int blue = nums.length - 1;
+        for (int i = 0; i < nums.length; i++) {
+            while (i < blue && nums[i] == 2) {
+                this.reverse(nums, i, blue--);
+            }
+            while (i > red && nums[i] == 0) {
+                this.reverse(nums, i, red++);
+            }
+        }
+    }
+
+
+    /**
+     * 76. Minimum Window Substring
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public String minWindow(String s, String t) {
+        if (s == null || t == null) {
+            return "";
+        }
+        int result = Integer.MAX_VALUE;
+
+        int end = 0;
+
+        int begin = 0;
+
+        int head = 0;
+
+        int[] hash = new int[256];
+
+        int count = t.length();
+
+        for (int i = 0; i < t.length(); i++) {
+            hash[t.charAt(i) - '0']++;
+        }
+
+        while (end < s.length()) {
+            if (hash[s.charAt(end++) - '0']-- > 0) {
+                count--;
+            }
+            while (count == 0) {
+                if (end - begin < result) {
+                    head = begin;
+                    result = end - begin;
+                }
+                if (hash[s.charAt(begin++) - '0']++ == 0) {
+                    count++;
+                }
+            }
+
+        }
+        if (result != Integer.MAX_VALUE) {
+            return s.substring(head, head + result);
+        }
+        return "";
+    }
+
+
+    /**
+     * 77. Combinations
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public List<List<Integer>> combine(int n, int k) {
+        if (n <= 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        this.combine(ans, new ArrayList<Integer>(), 1, n, k);
+        return ans;
+    }
+
+    private void combine(List<List<Integer>> ans, List<Integer> tmp, int start, int n, int k) {
+        if (tmp.size() == k) {
+            ans.add(new ArrayList<>(tmp));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            tmp.add(i);
+            this.combine(ans, tmp, i + 1, n, k);
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+
+    /**
+     * 78. Subsets
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        this.subsets(ans, new ArrayList<Integer>(), 0, nums);
+        return ans;
+
+    }
+
+    private void subsets(List<List<Integer>> ans, List<Integer> tmp, int start, int[] nums) {
+        ans.add(new ArrayList<>(tmp));
+        for (int i = start; i < nums.length; i++) {
+            tmp.add(nums[i]);
+            this.subsets(ans, tmp, i + 1, nums);
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+
+    /**
+     * 79. Word Search
+     *
+     * @param board
+     * @param word
+     * @return
+     */
+    public boolean exist(char[][] board, String word) {
+        if (board == null || board.length == 0) {
+            return false;
+        }
+        int row = board.length;
+        int column = board[0].length;
+        boolean[][] used = new boolean[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (board[i][j] == word.charAt(0) && this.verifyExist(board, i, j, used, 0, word)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean verifyExist(char[][] board, int i, int j, boolean[][] used, int end, String word) {
+
+        if (end == word.length()) {
+            return true;
+        }
+
+        if (i < 0 || i >= board.length || j < 0 || j >= board[i].length || used[i][j] || board[i][j] != word.charAt(end)) {
+            return false;
+        }
+
+        used[i][j] = true;
+
+        if (this.verifyExist(board, i - 1, j, used, end + 1, word) || this.verifyExist(board, i + 1, j, used, end + 1, word)
+                || this.verifyExist(board, i, j - 1, used, end + 1, word) || this.verifyExist(board, i, j + 1, used, end + 1, word)) {
+            return true;
+        }
+
+        used[i][j] = false;
+
+        return false;
+    }
+
 
 }
