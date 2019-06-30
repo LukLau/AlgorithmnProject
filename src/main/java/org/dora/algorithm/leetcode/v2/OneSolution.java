@@ -2156,4 +2156,273 @@ public class OneSolution {
     }
 
 
+    /**
+     * 80. Remove Duplicates from Sorted Array II
+     *
+     * @param nums
+     * @return
+     */
+    public int removeDuplicatesII(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int count = 1;
+        int index = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1]) {
+                count++;
+                if (count > 2) {
+                    continue;
+                }
+            } else {
+                count = 1;
+            }
+            nums[index++] = nums[i];
+        }
+        return index;
+    }
+
+    /**
+     * 81. Search in Rotated Sorted Array II
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public boolean searchII(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target) {
+                return true;
+            }
+            if (nums[left] == nums[right]) {
+                left++;
+            } else if (nums[left] <= nums[mid]) {
+                if (target < nums[mid] && nums[left] <= target) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && nums[right] >= target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 82. Remove Duplicates from Sorted List II
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicatesII(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        if (head.val == head.next.val) {
+            ListNode node = head.next.next;
+            while (node != null && node.val == head.val) {
+                node = node.next;
+            }
+            return this.deleteDuplicatesII(node);
+        } else {
+            head.next = this.deleteDuplicatesII(head.next);
+            return head;
+        }
+    }
+
+    /**
+     * 83. Remove Duplicates from Sorted List
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        if (head.val == head.next.val) {
+            return this.deleteDuplicates(head.next);
+        }
+
+        head.next = this.deleteDuplicates(head.next);
+
+        return head;
+    }
+
+    /**
+     * 84. Largest Rectangle in Histogram
+     *
+     * @param heights
+     * @return
+     */
+    public int largestRectangleArea(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i <= heights.length; i++) {
+            int h = i == heights.length ? 0 : heights[i];
+
+            if (stack.isEmpty() || heights[stack.peek()] <= h) {
+                stack.push(i);
+            } else {
+                int value = heights[stack.pop()];
+                int side = stack.isEmpty() ? i : i - stack.peek() - 1;
+                result = Math.max(result, value * side);
+                i--;
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * todo
+     * 85. Maximal Rectangle
+     *
+     * @param matrix
+     * @return
+     */
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int column = matrix[0].length;
+
+
+        int result = 0;
+
+        int[] left = new int[column];
+
+        int[] right = new int[column];
+
+        int[] height = new int[column];
+
+
+        for (int j = 0; j < column; j++) {
+            right[j] = column;
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+
+            int leftEdge = 0;
+
+            int rightEdge = column;
+
+            for (int j = 0; j < column; j++) {
+                if (matrix[i][j] == '0') {
+                    height[j] = 0;
+                } else {
+                    height[j]++;
+                }
+            }
+            for (int j = 0; j < column; j++) {
+                if (matrix[i][j] == '1') {
+                    left[j] = Math.max(left[j], leftEdge);
+                } else {
+
+                    left[j] = 0;
+
+                    leftEdge = j + 1;
+                }
+            }
+
+            for (int j = column - 1; j >= 0; j--) {
+                if (matrix[i][j] == '1') {
+                    right[j] = Math.min(rightEdge, right[j]);
+                } else {
+                    right[j] = column;
+                    rightEdge = j;
+                }
+            }
+
+
+            for (int j = 0; j < column; j++) {
+                result = Math.max(result, (right[j] - left[j]) * height[j]);
+
+            }
+        }
+        return result;
+
+
+    }
+
+
+    /**
+     * 86. Partition List
+     *
+     * @param head
+     * @param x
+     * @return
+     */
+    public ListNode partition(ListNode head, int x) {
+        if (head == null) {
+            return null;
+        }
+
+        ListNode dummy1 = new ListNode(0);
+        ListNode d1 = dummy1;
+
+
+        ListNode dummy2 = new ListNode(0);
+        ListNode d2 = dummy2;
+
+        while (head != null) {
+            if (head.val < x) {
+                d1.next = head;
+                d1 = d1.next;
+            } else {
+
+                d2.next = head;
+
+                d2 = d2.next;
+            }
+            head = head.next;
+
+        }
+
+        d2.next = null;
+
+        d1.next = dummy2.next;
+
+
+        return dummy1.next;
+    }
+
+
+    /**
+     * todo
+     * 87. Scramble String
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public boolean isScramble(String s1, String s2) {
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        if (s1.equals(s2)) {
+            return true;
+        }
+        int[] hash = new int[256];
+
+    }
+
+
 }
