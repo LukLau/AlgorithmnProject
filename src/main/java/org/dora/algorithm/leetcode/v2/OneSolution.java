@@ -1,6 +1,7 @@
 package org.dora.algorithm.leetcode.v2;
 
 import org.dora.algorithm.datastructe.ListNode;
+import org.dora.algorithm.datastructe.TreeNode;
 
 import java.util.*;
 
@@ -28,6 +29,25 @@ public class OneSolution {
         int tmp = nums[i];
         nums[i] = nums[j];
         nums[j] = tmp;
+    }
+
+    private ListNode reverseList(ListNode first, ListNode last) {
+
+        ListNode prev = null;
+
+
+        while (prev != last) {
+
+            ListNode tmp = first.next;
+
+            first.next = prev;
+
+            prev = first;
+
+            first = tmp;
+        }
+        return prev;
+
     }
 
     /**
@@ -2421,7 +2441,357 @@ public class OneSolution {
             return true;
         }
         int[] hash = new int[256];
+        return false;
+    }
 
+
+    /**
+     * 88. Merge Sorted Array
+     *
+     * @param nums1
+     * @param m
+     * @param nums2
+     * @param n
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        if (nums1 == null || nums2 == null) {
+            return;
+        }
+
+        int k = m + n - 1;
+
+        m--;
+
+        n--;
+
+        while (m >= 0 && n >= 0) {
+            if (nums1[m] >= nums2[n]) {
+                nums1[k--] = nums1[m--];
+            } else {
+                nums1[k--] = nums2[n--];
+            }
+        }
+
+        while (n >= 0) {
+            nums1[k--] = nums2[n--];
+        }
+
+    }
+
+
+    /**
+     * 90. Subsets II
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+
+        Arrays.sort(nums);
+
+        this.subsetsWithDup(ans, new ArrayList<Integer>(), 0, nums);
+
+        return ans;
+
+    }
+
+    private void subsetsWithDup(List<List<Integer>> ans, List<Integer> tmp, int start, int[] nums) {
+        ans.add(new ArrayList<>(tmp));
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            tmp.add(nums[i]);
+
+            this.subsetsWithDup(ans, tmp, i + 1, nums);
+
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+
+
+    /**
+     * 92. Reverse Linked List II
+     *
+     * @param head
+     * @param m
+     * @param n
+     * @return
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode root = new ListNode(0);
+
+        root.next = head;
+
+        ListNode slow = root;
+
+        ListNode fast = root;
+
+        for (int i = 0; i < m - 1; i++) {
+            slow = slow.next;
+        }
+
+        for (int i = 0; i < n; i++) {
+            fast = fast.next;
+        }
+
+        ListNode start = slow.next;
+
+        ListNode end = fast.next;
+
+        ListNode reverse = this.reverseList(start, fast);
+
+        slow.next = reverse;
+
+
+        start.next = end;
+
+
+        return root.next;
+
+    }
+
+    /**
+     * 93. Restore IP Addresses
+     *
+     * @param s
+     * @return
+     */
+    public List<String> restoreIpAddresses(String s) {
+        return null;
+    }
+
+
+    /**
+     * 94. Binary Tree Inorder Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> ans = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+
+            while (p != null) {
+
+                stack.push(p);
+
+                p = p.left;
+            }
+            p = stack.pop();
+
+            ans.add(p.val);
+
+            p = p.right;
+
+        }
+        return ans;
+    }
+
+
+    /**
+     * 95. Unique Binary Search Trees II
+     *
+     * @param n
+     * @return
+     */
+    public List<TreeNode> generateTrees(int n) {
+        if (n <= 0) {
+            return new ArrayList<>();
+        }
+        return this.generateTrees(1, n);
+    }
+
+    private List<TreeNode> generateTrees(int start, int end) {
+        List<TreeNode> ans = new ArrayList<>();
+        if (start == end) {
+            ans.add(new TreeNode(start));
+            return ans;
+        }
+        if (start > end) {
+            ans.add(null);
+            return ans;
+        }
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> leftList = this.generateTrees(start, i - 1);
+
+            List<TreeNode> rightList = this.generateTrees(i + 1, end);
+
+            for (TreeNode left : leftList) {
+                for (TreeNode right : rightList) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = left;
+                    root.right = right;
+                    ans.add(root);
+                }
+            }
+        }
+        return ans;
+    }
+
+
+    /**
+     * 96. Unique Binary Search Trees
+     *
+     * @param n
+     * @return
+     */
+    public int numTrees(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+        int[] dp = new int[n + 1];
+
+
+        dp[0] = dp[1];
+
+        for (int i = 2; i <= n; i++) {
+            for (int j = 1; j <= i; j++) {
+                dp[i] += dp[j] * dp[i - 1];
+            }
+        }
+        return dp[n];
+    }
+
+    /**
+     * todo
+     * 97. Interleaving String
+     *
+     * @param s1
+     * @param s2
+     * @param s3
+     * @return
+     */
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s1 == null || s2 == null || s3 == null) {
+            return false;
+        }
+        int m = s1.length();
+
+        int n = s2.length();
+        if (m + n != s3.length()) {
+            return false;
+        }
+        boolean[][] dp = new boolean[m][n];
+
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = s1.charAt(i) == s3.charAt(i);
+        }
+        for (int j = 0; j < n; j++) {
+            dp[0][j] = s2.charAt(j) == s3.charAt(j);
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 98. Validate Binary Search Tree
+     *
+     * @param root
+     * @return
+     */
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) {
+            return false;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode prev = null;
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+            if (prev != null && prev.val >= p.val) {
+                return false;
+            }
+            prev = p;
+
+            p = p.right;
+        }
+        return true;
+    }
+
+
+    /**
+     * 99. Recover Binary Search Tree
+     *
+     * @param root
+     */
+    public void recoverTree(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode first = null;
+        TreeNode second = null;
+        TreeNode prev = null;
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+
+            p = stack.pop();
+
+            if (prev != null) {
+                if (first == null && prev.val >= p.val) {
+                    first = prev;
+                }
+                if (first != null && prev.val >= p.val) {
+                    second = p;
+                }
+            }
+            prev = p;
+
+            p = p.right;
+        }
+
+        if (first != null && second != null) {
+            int tmp = first.val;
+            first.val = second.val;
+            second.val = tmp;
+        }
+    }
+
+
+    /**
+     * 100. Same Tree
+     *
+     * @param p
+     * @param q
+     * @return
+     */
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) {
+            return true;
+        }
+        if (p == null || q == null) {
+            return false;
+        }
+        if (p.val == q.val) {
+            return this.isSameTree(p.left, q.left) && this.isSameTree(p.right, q.right);
+        }
+        return false;
     }
 
 
