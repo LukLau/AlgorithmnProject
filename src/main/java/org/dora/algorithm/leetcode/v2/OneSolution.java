@@ -2795,4 +2795,328 @@ public class OneSolution {
     }
 
 
+    /**
+     * 101. Symmetric Tree
+     *
+     * @param root
+     * @return
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+
+        TreeNode left = root.left;
+
+        TreeNode right = root.right;
+
+        return this.isSymmetric(left, right);
+
+    }
+
+    private boolean isSymmetric(TreeNode left, TreeNode right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null || right == null) {
+            return false;
+        }
+        if (left.val == right.val) {
+            return this.isSymmetric(left.left, right.right) && this.isSymmetric(left.right, right.left);
+        }
+        return false;
+    }
+
+    /**
+     * 102. Binary Tree Level Order Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+
+        Deque<TreeNode> deque = new LinkedList<>();
+
+        deque.add(root);
+
+        while (!deque.isEmpty()) {
+
+            int size = deque.size();
+
+            List<Integer> tmp = new ArrayList<>();
+
+            for (int i = 0; i < size; i++) {
+                TreeNode p = deque.poll();
+                tmp.add(p.val);
+                if (p.left != null) {
+                    deque.add(p.left);
+                }
+                if (p.right != null) {
+                    deque.add(p.right);
+                }
+            }
+
+            ans.add(tmp);
+        }
+        return ans;
+    }
+
+
+    /**
+     * 103. Binary Tree Zigzag Level Order Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        boolean leftToRight = true;
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.add(root);
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+            Deque<Integer> tmp = new LinkedList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode p = deque.poll();
+                if (leftToRight) {
+                    tmp.addLast(p.val);
+                } else {
+                    tmp.addFirst(p.val);
+                }
+                if (p.left != null) {
+                    deque.add(p.left);
+                }
+                if (p.right != null) {
+                    deque.add(p.right);
+                }
+            }
+            ans.add(new ArrayList<>(tmp));
+            leftToRight = !leftToRight;
+        }
+        return ans;
+    }
+
+
+    /**
+     * 104. Maximum Depth of Binary Tree
+     *
+     * @param root
+     * @return
+     */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return 1 + Math.max(this.maxDepth(root.left), this.maxDepth(root.right));
+    }
+
+    /**
+     * 105. Construct Binary Tree from Preorder and Inorder Traversal
+     *
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder == null || inorder == null | preorder.length == 0 || inorder.length == 0) {
+            return null;
+        }
+        return this.buildTree(0, preorder, 0, inorder.length - 1, inorder);
+    }
+
+    private TreeNode buildTree(int preStart, int[] preorder, int inStart, int inEnd, int[] inorder) {
+        if (preStart >= preorder.length || inStart > inEnd) {
+            return null;
+        }
+
+        TreeNode root = new TreeNode(preorder[preStart]);
+
+        int index = 0;
+
+
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == root.val) {
+                index = i;
+                break;
+            }
+        }
+
+        root.left = this.buildTree(preStart + 1, preorder, inStart, index - 1, inorder);
+
+        root.right = this.buildTree(preStart + index - inStart + 1, preorder, index + 1, inEnd, inorder);
+
+        return root;
+    }
+
+
+    /**
+     * 106. Construct Binary Tree from Inorder and Postorder Traversal
+     *
+     * @param inorder
+     * @param postorder
+     * @return
+     */
+    public TreeNode buildTreeI(int[] inorder, int[] postorder) {
+        if (inorder == null || postorder == null) {
+            return null;
+        }
+        return this.buildTree(0, inorder.length - 1, inorder, 0, postorder.length - 1, postorder);
+    }
+
+    private TreeNode buildTree(int inStart, int inEnd, int[] inorder, int postStart, int postEnd, int[] postorder) {
+        if (inStart > inEnd || postStart > postEnd) {
+            return null;
+        }
+
+        TreeNode root = new TreeNode(postorder[postEnd]);
+
+        int index = 0;
+
+
+        for (int i = inStart; i <= inEnd; i++) {
+            if (inorder[i] == root.val) {
+                index = i;
+                break;
+            }
+        }
+
+        root.left = this.buildTree(inStart, index - 1, inorder, postStart, postStart + index - inStart - 1, postorder);
+
+        root.right = this.buildTree(index + 1, inEnd, inorder, postStart + index - inStart, postEnd - 1, postorder);
+
+        return root;
+    }
+
+    /**
+     * 107. Binary Tree Level Order Traversal II
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        LinkedList<List<Integer>> ans = new LinkedList<>();
+
+        Deque<TreeNode> deque = new LinkedList<>();
+
+        deque.add(root);
+
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+
+
+            List<Integer> tmp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+
+
+                TreeNode p = deque.poll();
+
+                tmp.add(p.val);
+
+                if (p.left != null) {
+                    deque.add(p.left);
+                }
+                if (p.right != null) {
+                    deque.add(p.right);
+                }
+            }
+            ans.addFirst(tmp);
+        }
+        return ans;
+    }
+
+
+    /**
+     * 108. Convert Sorted Array to Binary Search Tree
+     *
+     * @param nums
+     * @return
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
+        }
+        return this.sortedArrayToBST(0, nums.length - 1, nums);
+    }
+
+    private TreeNode sortedArrayToBST(int start, int end, int[] nums) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+
+        TreeNode root = new TreeNode(nums[mid]);
+
+
+        root.left = this.sortedArrayToBST(start, mid - 1, nums);
+
+        root.right = this.sortedArrayToBST(mid + 1, end, nums);
+
+        return root;
+    }
+
+
+    /**
+     * todo
+     * 109. Convert Sorted List to Binary Search Tree
+     *
+     * @param head
+     * @return
+     */
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        return this.sortedListToBST(head, null);
+    }
+
+    private TreeNode sortedListToBST(ListNode head, ListNode end) {
+        if (head == end) {
+            return null;
+        }
+        ListNode fast = head;
+        ListNode slow = head;
+
+        while (fast != end && fast.next != end) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        ListNode tmp = slow.next;
+
+
+        TreeNode root = new TreeNode(slow.val);
+
+        root.left = this.sortedListToBST(head, slow);
+
+        root.right = this.sortedListToBST(slow.next, end);
+        return root;
+    }
+
+
+    /**
+     * 110. Balanced Binary Tree
+     *
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        if (Math.abs(this.maxDepth(root.left) - this.maxDepth(root.right)) <= 1) {
+            return this.isBalanced(root.left) && this.isBalanced(root.right);
+        }
+        return false;
+    }
+
+
 }
