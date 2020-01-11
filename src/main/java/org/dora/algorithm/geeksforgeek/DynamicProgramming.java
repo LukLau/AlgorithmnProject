@@ -971,7 +971,39 @@ public class DynamicProgramming {
             index = idx;
         }
         return min1;
+    }
 
+
+    /**
+     * 274. H-Index
+     *
+     * @param citations
+     * @return
+     */
+    public int hIndex(int[] citations) {
+        return 0;
+    }
+
+    /**
+     * 275. H-Index II
+     *
+     * @param citations
+     * @return
+     */
+    public int hIndexII(int[] citations) {
+        return 0;
+    }
+
+    /**
+     * 276 Paint Fence
+     *
+     * @param n: non-negative integer, n posts
+     * @param k: non-negative integer, k colors
+     * @return: an integer, the total number of ways
+     */
+    public int numWays(int n, int k) {
+        // write your code here
+        return 1;
     }
 
 

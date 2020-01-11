@@ -1561,6 +1561,18 @@ public class Traversal {
 
 
     /**
+     * 269. Alien Dictionary
+     * tod:
+     *
+     * @param words
+     * @return
+     */
+    public String alienOrder(List<String> words) {
+        return "";
+    }
+
+
+    /**
      * 270 Closest Binary Search Tree Value
      *
      * @param root:   the given BST
@@ -1569,35 +1581,72 @@ public class Traversal {
      */
     public int closestValue(TreeNode root, double target) {
         // write your code here
-        if (root == null) {
-            return Integer.MAX_VALUE;
-        }
-        Stack<TreeNode> stack = new Stack<>();
 
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        double result = 0;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+
+            if (p.val == target) {
+                return p.val;
+            }
+            if (Math.abs(p.val - target) < Math.abs(result - target)) {
+                result = p.val;
+            }
+            p = p.right;
+        }
+        return (int) result;
+    }
+
+
+    public int closestValueV2(TreeNode root, double target) {
         double result = 0;
 
-        stack.push(root);
-
-        while (!stack.isEmpty()) {
-            TreeNode pop = stack.pop();
-
+        while (root != null) {
             if (root.val == target) {
                 return root.val;
             }
-
-            if (pop.right != null) {
-                stack.push(pop.right);
+            if (Math.abs(root.val - target) < Math.abs(result - target)) {
+                result = root.val;
             }
-            if (pop.left != null) {
-                stack.push(pop.left);
-            }
-            if (result == 0) {
-                result = Math.min(pop.val, target);
-            } else if (Math.abs(pop.val - target) < Math.abs(result - target)) {
-                result = pop.val;
+            if (root.val < target) {
+                root = root.right;
+            } else {
+                root = root.left;
             }
         }
         return (int) result;
+    }
+
+
+    public int closestValueV3(TreeNode root, double target) {
+        if (root.val == target) {
+            return root.val;
+        }
+        int result = root.val;
+
+        if (root.val > target && root.left != null) {
+
+            int tmp = closestValueV3(root.left, target);
+
+            if (Math.abs(root.val - target) >= Math.abs(tmp - target)) {
+                result = tmp;
+            }
+        } else if (root.val < target && root.right != null) {
+
+            int tmp = closestValueV3(root.right, target);
+
+            if (Math.abs(root.val - target) >= Math.abs(tmp - target)) {
+                result = tmp;
+            }
+
+        }
+        return result;
     }
 
 

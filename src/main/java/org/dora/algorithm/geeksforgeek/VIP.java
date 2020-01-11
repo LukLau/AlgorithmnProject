@@ -22,9 +22,16 @@ public class VIP {
 
     public static void main(String[] args) {
         VIP vip = new VIP();
-        int[] nums = new int[]{-2, 0, 1, 3};
-        String param = "aabbcc";
-        vip.generatePalindromes(param);
+        TreeNode root = new TreeNode(3);
+        TreeNode right = new TreeNode(4);
+        root.right = right;
+        TreeNode left = new TreeNode(1);
+        left.right = new TreeNode(2);
+
+        root.left = left;
+
+        double target = 0.275000;
+        vip.closestKValues(root, target, 2);
     }
 
     /**
@@ -708,4 +715,129 @@ public class VIP {
             }
         }
     }
+
+
+    /**
+     * 271 Encode and Decode Strings
+     *
+     * @param strs: a list of strings
+     * @return: encodes a list of strings to a single string.
+     */
+    public String encode(List<String> strs) {
+        // write your code here
+        if (strs == null || strs.isEmpty()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < strs.size(); i++) {
+            String item = strs.get(i);
+
+            if (":".equals(item)) {
+                item += "::";
+            } else {
+                item += ":";
+            }
+            if (i < strs.size() - 1) {
+                item += ";";
+            }
+            builder.append(item);
+        }
+        return builder.toString();
+    }
+
+    /**
+     * @param str: A string
+     * @return: dcodes a single string to a list of strings
+     */
+    public List<String> decode(String str) {
+        // write your code here
+        if (str == null || str.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String[] split = str.split(";");
+        List<String> ans = new ArrayList<>();
+        for (String item : split) {
+            if (item.startsWith(":")) {
+                ans.add(":");
+            } else {
+                item = item.substring(0, item.length() - 1);
+                ans.add(item);
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 272 Closest Binary Search Tree Value II
+     *
+     * @param root:   the given BST
+     * @param target: the given target
+     * @param k:      the given k
+     * @return: k values in the BST that are closest to the target
+     */
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        // write your code here
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> result = new ArrayList<>();
+
+
+        List<Integer> values = new ArrayList<>();
+
+        inorderTraversal(root, values);
+
+        int index = 0;
+
+        int n = values.size();
+
+        while (index < n) {
+            Integer integer = values.get(index);
+            if (integer >= target) {
+                break;
+            }
+            index++;
+        }
+        if (index >= n) {
+            return values.subList(n - k, n);
+        }
+
+        int left = index - 1;
+        int right = index;
+
+        for (int i = 0; i < k; i++) {
+            if (left >= 0 && (right >= n || target - values.get(left) < values.get(right) - target)) {
+                result.add(values.get(left));
+                left--;
+            } else {
+                result.add(values.get(right));
+                right++;
+            }
+        }
+        return result;
+
+
+    }
+
+    private void inorderTraversal(TreeNode root, List<Integer> valus) {
+        if (root == null) {
+            return;
+        }
+        inorderTraversal(root.left, valus);
+        valus.add(root.val);
+        inorderTraversal(root.right, valus);
+    }
+
+
+    public List<Integer> closestKValuesV2(TreeNode root, double target, int k) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        Stack<Integer> prev = new Stack<>();
+        Stack<Integer> next = new Stack<>();
+        return null;
+    }
+
+
 }
