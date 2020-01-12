@@ -23,15 +23,18 @@ public class VIP {
     public static void main(String[] args) {
         VIP vip = new VIP();
         TreeNode root = new TreeNode(3);
+
         TreeNode right = new TreeNode(4);
         root.right = right;
+
         TreeNode left = new TreeNode(1);
+
         left.right = new TreeNode(2);
 
         root.left = left;
 
-        double target = 0.275000;
-        vip.closestKValues(root, target, 2);
+        double target = 1.275000;
+        vip.closestKValuesV2(root, target, 2);
     }
 
     /**
@@ -834,9 +837,51 @@ public class VIP {
         if (root == null) {
             return new ArrayList<>();
         }
-        Stack<Integer> prev = new Stack<>();
-        Stack<Integer> next = new Stack<>();
-        return null;
+        TreeNode node = root;
+        Stack<TreeNode> prev = new Stack<>();
+        Stack<TreeNode> next = new Stack<>();
+        while (node != null) {
+            if (node.val < target) {
+                prev.push(node);
+                node = node.right;
+            } else {
+                next.push(node);
+                node = node.left;
+            }
+        }
+        List<Integer> result = new LinkedList<>();
+        while (result.size() < k) {
+            double distPrev = prev.isEmpty() ? Double.MAX_VALUE : Math.abs(target - prev.peek().val);
+            double distNext = next.isEmpty() ? Double.MAX_VALUE : Math.abs(target - next.peek().val);
+
+            if (distPrev < distNext) {
+                result.add(0, prev.peek().val);
+
+                getPrev(prev);
+            } else {
+                result.add(next.peek().val);
+                getNext(next);
+            }
+        }
+        return result;
+
+    }
+
+    private void getNext(Stack<TreeNode> next) {
+        TreeNode r = next.pop().right;
+
+        while (r != null) {
+            next.push(r);
+            r = r.left;
+        }
+    }
+
+    private void getPrev(Stack<TreeNode> prev) {
+        TreeNode l = prev.pop().left;
+        while (l != null) {
+            prev.push(l);
+            l = l.right;
+        }
     }
 
 

@@ -162,6 +162,8 @@ key point: digit = 1 + (n-1) mod 9
 
 > [求出第n个丑数的值](https://leetcode.com/problems/ugly-number-ii/)
 
+> [将正数转换为英文单词](https://www.lintcode.com/problem/integer-to-english-words/description)
+
 ----
 ## 位运算
 ------

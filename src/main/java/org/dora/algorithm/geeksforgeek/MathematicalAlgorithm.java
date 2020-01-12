@@ -12,7 +12,6 @@ public class MathematicalAlgorithm {
 
     public static void main(String[] args) {
         MathematicalAlgorithm algorithm = new MathematicalAlgorithm();
-        algorithm.nthUglyNumber(10);
     }
 
     /**
@@ -788,15 +787,40 @@ public class MathematicalAlgorithm {
         return "";
     }
 
-
     /**
-     * 273. Integer to English Words
+     * https://leetcode.com/problems/h-index/
+     * 274. H-Index
      *
-     * @param num
+     * @param citations
      * @return
      */
-    public String numberToWords(int num) {
-        return "";
+    public int hIndex(int[] citations) {
+        if (citations == null || citations.length == 0) {
+            return -1;
+        }
+        Arrays.sort(citations);
+        List<Integer> result = new ArrayList<>();
+        for (int i = citations.length - 1; i >= 0; i--) {
+            result.add(citations[i]);
+        }
+        for (int i = 0; i < result.size(); i++) {
+            if (i >= result.get(i)) {
+                return i;
+            }
+        }
+        return result.size();
+
+    }
+
+
+    /**
+     * https://leetcode.com/problems/h-index-ii/
+     *
+     * @param citations
+     * @return
+     */
+    public int hIndexII(int[] citations) {
+        return -1;
     }
 
 

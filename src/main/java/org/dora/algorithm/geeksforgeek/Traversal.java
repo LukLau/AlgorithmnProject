@@ -22,7 +22,7 @@ public class Traversal {
         TreeNode root = new TreeNode(2);
         root.left = new TreeNode(1);
         double target = Integer.MAX_VALUE;
-        traversal.closestValue(root, target);
+        traversal.numberToWords(1000000);
 
     }
 
@@ -1647,6 +1647,114 @@ public class Traversal {
 
         }
         return result;
+    }
+
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> values = new ArrayList<>();
+
+        inorderTraversal(values, root);
+
+        int index = 0;
+
+        int size = values.size();
+
+        while (index < size) {
+
+            Integer tmp = values.get(index);
+
+            if (tmp >= target) {
+                break;
+            }
+            index++;
+        }
+        if (index >= size) {
+            return values.subList(size - k, size);
+        }
+        int left = index - 1;
+
+        int right = index;
+
+        List<Integer> ans = new ArrayList<>();
+
+        for (int i = 0; i < k; i++) {
+
+            if (left >= 0 && (right >= size || target - values.get(left) < values.get(right) - target)) {
+                ans.add(values.get(left));
+                left--;
+            } else {
+                ans.add(values.get(right));
+                right++;
+            }
+        }
+        return ans;
+
+    }
+
+    private void inorderTraversal(List<Integer> values, TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        inorderTraversal(values, root.left);
+        values.add(root.val);
+        inorderTraversal(values, root.right);
+
+    }
+
+
+    /**
+     * 273. Integer to English Words
+     *
+     * @param num
+     * @return
+     */
+    public String numberToWords(int num) {
+        if (num < 0) {
+            return "";
+        }
+        if (num == 0) {
+            return "Zero";
+        }
+        String[] v = new String[]{"Thousand", "Million", "Billion"};
+
+        String res = convertNumber(num % 1000);
+
+        for (int i = 0; i < 3; i++) {
+
+            num = num / 1000;
+
+            res = num % 1000 > 0 ? convertNumber(num % 1000) + " " + v[i] + " " + res : res;
+        }
+
+        res = res.trim();
+
+        if (res.isEmpty()) {
+            return "ZERO";
+        }
+        return res;
+    }
+
+    private String convertNumber(int num) {
+        String[] v1 = new String[]{"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+
+        String[] v2 = new String[]{"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+
+        String res = "";
+
+        int a = num / 100;
+
+        int b = num % 100;
+
+        int c = num % 10;
+
+        res = b < 20 ? v1[b] : (v2[b / 10] + (c == 0 ? "" : " " + v1[c]));
+
+        if (a != 0) {
+            res = v1[a] + " Hundred" + (b != 0 ? " " + res : "");
+        }
+        return res;
     }
 
 
