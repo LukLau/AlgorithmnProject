@@ -824,4 +824,42 @@ public class MathematicalAlgorithm {
     }
 
 
+    /**
+     * 277 Find the Celebrity
+     *
+     * @param n a party with n people
+     * @return the celebrity's label or -1
+     */
+    public int findCelebrity(int n) {
+        // Write your code here
+        if (n < 0) {
+            return -1;
+        }
+        int candidate = 0;
+        for (int i = 1; i < n; i++) {
+
+            if (knows(candidate, i)) {
+
+                candidate = i;
+            }
+        }
+
+        for (int i = candidate + 1; i < n; i++) {
+            if (!knows(i, candidate)) {
+                return -1;
+            }
+        }
+        for (int i = 0; i < candidate - 1; i++) {
+            if (knows(candidate, i) || !knows(i, candidate)) {
+                return -1;
+            }
+        }
+        return candidate;
+    }
+
+    public boolean knows(int A, int B) {
+        return true;
+    }
+
+
 }

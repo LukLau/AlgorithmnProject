@@ -6,6 +6,7 @@ import org.dora.algorithm.datastructe.TreeNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 递归其实是动态规划的另种方式
@@ -981,8 +982,21 @@ public class DynamicProgramming {
      * @return
      */
     public int hIndex(int[] citations) {
+        if (citations == null || citations.length == 0) {
+            return -1;
+        }
+        Arrays.sort(citations);
+        return -1;
+    }
+
+    public int hIndexV2(int[] citations) {
+        if (Objects.isNull(citations)) {
+            return -1;
+        }
+        Arrays.sort(citations);
         return 0;
     }
+
 
     /**
      * 275. H-Index II
@@ -1002,22 +1016,47 @@ public class DynamicProgramming {
      * @return: an integer, the total number of ways
      */
     public int numWays(int n, int k) {
+
         // write your code here
-        int[] dp = new int[n + 1];
-        dp[1] = k;
-        dp[2] = k * k;
+
+        int[] dp = new int[]{0, k, k * k, 0};
+
         if (n <= 2) {
             return dp[n];
         }
         if (k == 1) {
             return 0;
         }
-        for (int i = 3; i <= n; i++) {
-            dp[i] = (k - 1) * (dp[i - 1] + dp[i - 2]);
-            dp[i - 1] = dp[i - 2];
-            dp[i - 2] = dp[i];
+        for (int i = 2; i < n; i++) {
+            dp[3] = (k - 1) * (dp[1] + dp[2]);
+            dp[1] = dp[2];
+            dp[2] = dp[3];
         }
-        return dp[n];
+        return dp[3];
+    }
 
+    public int numWaysV2(int n, int k) {
+        if (n == 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return k;
+        }
+        if (n == 2) {
+            return k * k;
+        }
+        int sum1 = k;
+        int sum2 = k * k;
+        int result = 0;
+        for (int i = 2; i < n; i++) {
+            result = (k - 1) * (sum1 + sum2);
+
+            sum1 = sum2;
+
+            sum2 = result;
+        }
+        return result;
 
     }
+
+}
