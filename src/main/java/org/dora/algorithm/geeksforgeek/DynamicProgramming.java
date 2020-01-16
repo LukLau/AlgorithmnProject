@@ -3,10 +3,7 @@ package org.dora.algorithm.geeksforgeek;
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.TreeNode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 递归其实是动态规划的另种方式
@@ -1058,5 +1055,61 @@ public class DynamicProgramming {
         return result;
 
     }
+
+
+    /**
+     * 279. Perfect Squares
+     *
+     * @param n
+     * @return
+     */
+    public int numSquares(int n) {
+        if (n < 0) {
+            return -1;
+        }
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        for (int i = 0; i * i <= n; i++) {
+            dp[i * i] = 1;
+        }
+        for (int i = 0; i <= n; i++) {
+            for (int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+        return dp[n];
+    }
+
+    public int numSquaresV2(int n) {
+        if (n < 0) {
+            return -1;
+        }
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 1; i * i <= n; i++) {
+            ans.add(i * i);
+        }
+        HashMap<Integer, Integer> map = new HashMap<>();
+        return intervalCalculate(map, ans, n);
+    }
+
+    private int intervalCalculate(HashMap<Integer, Integer> map, List<Integer> ans, int target) {
+        if (map.containsKey(target)) {
+            return map.get(target);
+        }
+        if (target == 0) {
+            return 0;
+        }
+        int result = Integer.MAX_VALUE;
+        for (int i = ans.size() - 1; i >= 0; i--) {
+            if (target - ans.get(i) < 0) {
+                continue;
+            }
+            int tmp = intervalCalculate(map, ans, target - ans.get(i));
+            result = Math.min(result, tmp + 1);
+        }
+        map.put(target, result);
+        return result;
+    }
+
 
 }

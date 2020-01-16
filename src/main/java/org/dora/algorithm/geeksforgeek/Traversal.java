@@ -1296,6 +1296,36 @@ public class Traversal {
         return num;
     }
 
+
+    /**
+     * 280 Wiggle Sort
+     *
+     * @param nums: A list of integers
+     * @return: nothing
+     */
+    public void wiggleSort(int[] nums) {
+        // write your code here
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        for (int i = 1; i < nums.length; i++) {
+            boolean odd = nums[i] % 2 == 1;
+
+            boolean correctFormat = true;
+
+            if (odd && nums[i] < nums[i - 1]) {
+                correctFormat = false;
+            }
+            if (!odd && nums[i] > nums[i - 1]) {
+                correctFormat = false;
+            }
+
+            if (!correctFormat) {
+                swap(nums, i - 1, i);
+            }
+        }
+    }
+
     /**
      * 259 3Sum Smaller
      *
