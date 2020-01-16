@@ -22,19 +22,8 @@ public class VIP {
 
     public static void main(String[] args) {
         VIP vip = new VIP();
-        TreeNode root = new TreeNode(3);
-
-        TreeNode right = new TreeNode(4);
-        root.right = right;
-
-        TreeNode left = new TreeNode(1);
-
-        left.right = new TreeNode(2);
-
-        root.left = left;
-
-        double target = 1.275000;
-        vip.closestKValuesV2(root, target, 2);
+        int[][] edges = new int[][]{{0, 1}, {0, 2}, {0, 3}, {1, 4}};
+        vip.validTree(5, edges);
     }
 
     /**
@@ -597,7 +586,101 @@ public class VIP {
      * @return
      */
     public boolean validTree(int n, int[][] edges) {
-        return false;
+        if (edges == null) {
+            return false;
+        }
+        if (n == 1 && edges.length == 0) {
+            return true;
+        }
+        if (edges.length != n - 1) {
+            return false;
+        }
+        Map<Integer, Set<Integer>> graph = initGraph(n, edges);
+
+        boolean[] used = new boolean[n];
+
+        if (!correctGraph(graph, used, 0, -1)) {
+            return false;
+        }
+        for (boolean b : used) {
+            if (!b) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean correctGraph(Map<Integer, Set<Integer>> graph, boolean[] used, int current, int prev) {
+
+        if (used[current]) {
+            return false;
+        }
+        used[current] = true;
+        Set<Integer> set = graph.get(current);
+        for (Integer integer : set) {
+            if (integer != prev) {
+                if (!correctGraph(graph, used, integer, current)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    private void dfsGraph(int neighbor, Queue<Integer> queue, Map<Integer, Set<Integer>> graph, Set<Integer> hash) {
+        queue.offer(neighbor);
+        while (!queue.isEmpty()) {
+            Integer node = queue.poll();
+            Set<Integer> neighbors = graph.get(node);
+            for (Integer integer : neighbors) {
+                if (hash.contains(integer)) {
+                    continue;
+                }
+                hash.add(integer);
+                queue.offer(integer);
+            }
+        }
+    }
+
+
+    private void bfsGraph(Queue<Integer> queue, Map<Integer, Set<Integer>> graph, Set<Integer> hash) {
+
+        queue.offer(0);
+
+        hash.add(0);
+
+
+        while (!queue.isEmpty()) {
+
+            Integer node = queue.poll();
+
+            Set<Integer> integerSet = graph.get(node);
+
+            for (Integer integer : integerSet) {
+                if (hash.contains(integer)) {
+                    continue;
+                }
+                hash.add(integer);
+                queue.offer(integer);
+            }
+        }
+    }
+
+
+    private Map<Integer, Set<Integer>> initGraph(int n, int[][] edges) {
+        Map<Integer, Set<Integer>> graph = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            graph.put(i, new HashSet<Integer>());
+        }
+
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+        return graph;
     }
 
 

@@ -1271,6 +1271,33 @@ public class Traversal {
 
 
     /**
+     * 278. First Bad Version
+     *
+     * @param n
+     * @return
+     */
+    public int firstBadVersion(int n) {
+        if (n <= 0) {
+            return -1;
+        }
+        int left = 1;
+        int right = n;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (!isBadVersion(mid)) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+
+    private boolean isBadVersion(int version) {
+        return true;
+    }
+
+    /**
      * todo 优化间复杂度
      * 转化成 O(1) 时间复杂度
      * <p>

@@ -184,7 +184,7 @@ key point: digit = 1 + (n-1) mod 9
 # 数据结构
 树的定义: tree is an undirected graph in which any two vertices are connected by  exactly  one path. In other words, any connected graph without simple cycles is a tree.”
 > [判断无向图是否可以组装成树](https://github.com/grandyang/leetcode/issues/261)
-
+key point: 1、可以考虑使用深度和宽度 2、树的顶点 - 1 = 边数
 
 > [异形字典](https://www.lintcode.com/problem/alien-dictionary/description)
 key point: 有向连接图 排序

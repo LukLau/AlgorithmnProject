@@ -1059,4 +1059,25 @@ public class DynamicProgramming {
 
     }
 
+
+    /**
+     * 279. Perfect Squares
+     *
+     * @param n
+     * @return
+     */
+    public int numSquares(int n) {
+        if (n < 0) {
+            return -1;
+        }
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        for (int i = 1; i * i <= n; i++) {
+            dp[i * i] = 1;
+        }
+
+        return dp[n];
+    }
+
+
 }
