@@ -1361,6 +1361,46 @@ public class Traversal {
         return count;
     }
 
+
+    /**
+     * 280 Wiggle Sort
+     *
+     * @param nums: A list of integers
+     * @return: nothing
+     */
+    public void wiggleSort(int[] nums) {
+        // write your code here
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        for (int i = 1; i < nums.length; i++) {
+            boolean odd = i % 2 == 1;
+            boolean errorFormat = false;
+            if (odd && nums[i] < nums[i - 1]) {
+                errorFormat = true;
+            }
+            if (!odd && nums[i] > nums[i - 1]) {
+                errorFormat = true;
+            }
+            if (errorFormat) {
+                swap(nums, i, i - 1);
+            }
+        }
+    }
+
+    /**
+     * @param num
+     * @param target
+     * @return
+     */
+    public List<String> addOperators(String num, int target) {
+        if (num == null || num.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>();
+    }
+
+
     // ---------- 深度优先遍历DFS---------//
 
     /**
