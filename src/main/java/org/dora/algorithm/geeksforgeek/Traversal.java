@@ -16,14 +16,11 @@ public class Traversal {
 
     public static void main(String[] args) {
         Traversal traversal = new Traversal();
-//        int[] nums = new int[]{1, 5, 9, 1, 5, 9};
-//        traversal.containsNearbyAlmostDuplicate(nums, 2, 3);
-
-        TreeNode root = new TreeNode(2);
-        root.left = new TreeNode(1);
-        double target = Integer.MAX_VALUE;
-        traversal.numberToWords(1000000);
-
+//        String num = "105";
+//        int target = 5;
+//        traversal.addOperatorsV2(num, target);
+        int[] ans = new int[]{0, 1, 0, 3, 12};
+        traversal.moveZeroes(ans);
     }
 
     /**
@@ -1323,6 +1320,25 @@ public class Traversal {
         return num;
     }
 
+
+    /**
+     * 283. Move Zeroes
+     *
+     * @param nums
+     */
+    public void moveZeroes(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        int index = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                swap(nums, index++, i);
+            }
+        }
+    }
+
+
     /**
      * 259 3Sum Smaller
      *
@@ -1389,6 +1405,8 @@ public class Traversal {
     }
 
     /**
+     * 282. Expression Add Operators
+     *
      * @param num
      * @param target
      * @return
@@ -1397,7 +1415,83 @@ public class Traversal {
         if (num == null || num.isEmpty()) {
             return new ArrayList<>();
         }
-        return new ArrayList<>();
+        List<String> ans = new ArrayList<>();
+        intervalHelper(ans, "", num, target, 0, 0, 0);
+        return ans;
+    }
+
+    private void intervalHelper(List<String> ans, String s, String num, int target, int pos, long eval, long multi) {
+        if (pos == num.length() && eval == target) {
+            ans.add(s);
+            return;
+        }
+        for (int i = pos; i < num.length(); i++) {
+            if (i != pos && num.charAt(pos) == '0') {
+                break;
+            }
+            long current = Long.parseLong(num.substring(pos, i + 1));
+            if (pos == 0) {
+                intervalHelper(ans, s + current, num, target, i + 1, eval + current, current);
+            } else {
+                intervalHelper(ans, s + "+" + current, num, target, i + 1, eval + current, current);
+                intervalHelper(ans, s + "-" + current, num, target, i + 1, eval - current, -current);
+                intervalHelper(ans, s + "*" + current, num, target, i + 1, eval - multi + multi * current, multi * current);
+            }
+        }
+    }
+
+    public List<String> addOperatorsV2(String num, int target) {
+        if (num == null || num.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+        char[] path = new char[num.length() * 2 - 1];
+        char[] digits = num.toCharArray();
+        long n = 0;
+        for (int i = 0; i < digits.length; i++) {
+            n = n * 10 + digits[i] - '0';
+            path[i] = digits[i];
+            operatorsDfs(ans, path, i + 1, 0, n, digits, i + 1, target);
+            if (n == 0) {
+                break;
+            }
+        }
+        return ans;
+    }
+
+    private void operatorsDfs(List<String> ans, char[] path, int len, long left, long cur, char[] digits, int pos, int target) {
+        if (pos == path.length) {
+            if (left + cur == target) {
+                ans.add(new String(path, 0, len));
+            }
+            return;
+        }
+        long n = 0;
+        int j = len + 1;
+        for (int i = pos; i < digits.length; i++) {
+            n = n * 10 + digits[i] - '0';
+            path[j++] = digits[i];
+            path[len] = '+';
+            operatorsDfs(ans, path, j, left + cur, n, digits, i + 1, target);
+            path[len] = '-';
+            operatorsDfs(ans, path, j, left + cur, -n, digits, i + 1, target);
+            path[len] = '*';
+            operatorsDfs(ans, path, j, left, cur * n, digits, i + 1, target);
+            if (digits[pos] == '0') {
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * @param root: The root of the BST.
+     * @param p:    You need find the successor node of p.
+     * @return: Successor of p.
+     */
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        // write your code here
+
     }
 
 

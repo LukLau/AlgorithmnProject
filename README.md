@@ -188,3 +188,9 @@ key point: 1、可以考虑使用深度和宽度 2、树的顶点 - 1 = 边数
 
 > [异形字典](https://www.lintcode.com/problem/alien-dictionary/description)
 key point: 有向连接图 排序
+
+
+# 优化问题
+
+> [移动数组中0的个数](https://leetcode.com/problems/move-zeroes/submissions/)
+key point: 考虑用下标移动来优化
