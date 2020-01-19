@@ -16,11 +16,9 @@ public class Traversal {
 
     public static void main(String[] args) {
         Traversal traversal = new Traversal();
-//        String num = "105";
-//        int target = 5;
-//        traversal.addOperatorsV2(num, target);
-        int[] ans = new int[]{0, 1, 0, 3, 12};
-        traversal.moveZeroes(ans);
+
+        int[][] rooms = new int[][]{{2147483647, 0, 2147483647, 2147483647}, {2147483647, 2147483647, 2147483647, -1}, {2147483647, -1, 2147483647, -1}, {0, -1, 2147483647, 2147483647}};
+        traversal.wallsAndGates(rooms);
     }
 
     /**
@@ -1521,6 +1519,31 @@ public class Traversal {
     }
 
 
+    /**
+     * 287. Find the Duplicate Number
+     *
+     * @param nums
+     * @return
+     */
+    public int findDuplicate(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+        Arrays.sort(nums);
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1]) {
+                return nums[i];
+            }
+        }
+        return -1;
+    }
+
+
+    public int findDuplicateV2(int[] nums) {
+        return -1;
+    }
+
+
     // ---------- 深度优先遍历DFS---------//
 
     /**
@@ -1960,13 +1983,65 @@ public class Traversal {
 
         int column = rooms[0].length;
 
+        int[] dx = new int[]{0, 1, 0, -1};
+        int[] dy = new int[]{1, 0, -1, 0};
+
+        Queue<Integer> qx = new LinkedList<>();
+        Queue<Integer> qy = new LinkedList<>();
+
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                int val = rooms[i][j];
+                if (rooms[i][j] == 0) {
+                    qx.offer(i);
+                    qy.offer(j);
+                }
             }
         }
 
+        while (!qx.isEmpty()) {
+            Integer cx = qx.poll();
+            Integer cy = qy.poll();
+            for (int i = 0; i < 4; i++) {
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
 
+                if (0 <= nx && nx < row && 0 <= ny && ny < column
+                        && rooms[nx][ny] == Integer.MAX_VALUE) {
+                    qx.offer(nx);
+                    qy.offer(ny);
+                    rooms[nx][ny] = rooms[cx][cy] + 1;
+                }
+            }
+        }
+    }
+
+
+    public void wallsAndGatesV2(int[][] rooms) {
+        if (rooms == null || rooms.length == 0) {
+            return;
+        }
+        int row = rooms.length;
+        int column = rooms[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (rooms[i][j] == 0) {
+                    intervalWallsV2(i, j, row, column, 0, rooms);
+                }
+            }
+        }
+    }
+
+    private void intervalWallsV2(int i, int j, int row, int column, int distance, int[][] rooms) {
+        if (i < 0 || i >= row || j < 0 || j >= column || rooms[i][j] == -1) {
+            return;
+        }
+        if (rooms[i][j] > distance || distance == 0) {
+            rooms[i][j] = distance;
+            intervalWallsV2(i - 1, j, row, column, distance + 1, rooms);
+            intervalWallsV2(i + 1, j, row, column, distance + 1, rooms);
+            intervalWallsV2(i, j - 1, row, column, distance + 1, rooms);
+            intervalWallsV2(i, j + 1, row, column, distance + 1, rooms);
+        }
     }
 
 }

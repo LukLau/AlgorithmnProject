@@ -27,6 +27,9 @@
 
 > [符号添加不同方式 即遍历方式](https://leetcode.com/problems/different-ways-to-add-parentheses/)
 
+> [墙和门问题](https://www.lintcode.com/problem/walls-and-gates/description)
+
+
 
 ## 连续序列问题
 > [数组中连续最大乘积 keyCase: 考虑到连续序列](https://leetcode.com/problems/maximum-product-subarray/)
@@ -164,6 +167,9 @@ key point: digit = 1 + (n-1) mod 9
 
 > [将正数转换为英文单词](https://www.lintcode.com/problem/integer-to-english-words/description)
 
+> [在数组中找到重复的数字](https://leetcode.com/problems/find-the-duplicate-number/solution/)
+key point: Floyd's Tortoise and Hare
+不允许使用任务额外空间 
 ----
 ## 位运算
 ------

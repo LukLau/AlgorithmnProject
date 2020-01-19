@@ -305,5 +305,9 @@ public class InterviewAlgorithm {
         return ans;
     }
 
+    public static void main(String[] args) {
+
+    }
+
 
 }
