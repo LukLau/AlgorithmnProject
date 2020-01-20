@@ -29,6 +29,7 @@
 
 > [墙和门问题](https://www.lintcode.com/problem/walls-and-gates/description)
 
+> [生命游戏](https://leetcode.com/problems/game-of-life/solution/)
 
 
 ## 连续序列问题

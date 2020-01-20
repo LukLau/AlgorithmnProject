@@ -1544,6 +1544,103 @@ public class Traversal {
     }
 
 
+    /**
+     * 289. Game of Life
+     *
+     * @param board
+     */
+    public void gameOfLife(int[][] board) {
+        if (board == null || board.length == 0) {
+            return;
+        }
+        return;
+    }
+
+
+    /**
+     * 290. Word Pattern
+     *
+     * @param pattern
+     * @param str
+     * @return
+     */
+    public boolean wordPattern(String pattern, String str) {
+        if (pattern == null || str == null) {
+            return false;
+        }
+        String[] strs = str.split(" ");
+
+        if (strs.length == 0 || strs.length != pattern.length()) {
+            return false;
+        }
+        Map map = new HashMap();
+
+        for (Integer i = 0; i < strs.length; ++i) {
+            if (!Objects.equals(map.put(pattern.charAt(i), i), map.put(strs[i], i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public boolean wordPatternV2(String pattern, String str) {
+        if (pattern == null || str == null) {
+            return false;
+        }
+        String[] words = str.split(" ");
+
+        if (words.length != pattern.length()) {
+            return false;
+        }
+        Map<Character, String> map = new HashMap<>();
+        char[] chars = pattern.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+
+            if (map.containsKey(c)) {
+                if (!map.get(c).equals(words[i])) {
+                    return false;
+                }
+            } else {
+                if (map.containsValue(words[i])) {
+                    return false;
+                }
+                map.put(c, words[i]);
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * #291 Word Pattern II
+     *
+     * @param pattern: a string,denote pattern string
+     * @param str:     a string, denote matching string
+     * @return: a boolean
+     */
+    public boolean wordPatternMatch(String pattern, String str) {
+        // write your code here
+        return false;
+    }
+
+    /**
+     * 293 Flip Game
+     *
+     * @param s: the given string
+     * @return: all the possible states of the string after one valid move
+     */
+    public List<String> generatePossibleNextMoves(String s) {
+        // write your code here
+        if (s == null || s.length() == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+
+    }
+
+
     // ---------- 深度优先遍历DFS---------//
 
     /**
