@@ -15,10 +15,12 @@ import java.util.*;
 public class Traversal {
 
     public static void main(String[] args) {
+
         Traversal traversal = new Traversal();
 
-        int[][] rooms = new int[][]{{2147483647, 0, 2147483647, 2147483647}, {2147483647, 2147483647, 2147483647, -1}, {2147483647, -1, 2147483647, -1}, {0, -1, 2147483647, 2147483647}};
-        traversal.wallsAndGates(rooms);
+
+        String str = "---+++-+++-+";
+        traversal.generatePossibleNextMoves(str);
     }
 
     /**
@@ -1638,6 +1640,82 @@ public class Traversal {
         }
         List<String> ans = new ArrayList<>();
 
+        for (int i = 0; i < s.length(); i++) {
+
+            int index = s.indexOf("++", i);
+
+            if (index != -1) {
+                String tmp = s.substring(0, index) + "--" + s.substring(index + 2);
+                ans.add(tmp);
+                i = index;
+            }
+        }
+        return ans;
+    }
+
+
+    /**
+     * 294 Flip Game II
+     *
+     * @param s: the given string
+     * @return: if the starting player can guarantee a win
+     */
+    public boolean canWin(String s) {
+        // write your code here
+        if (s == null || s.length() < 2) {
+            return false;
+        }
+        for (int i = 0; i < s.length() - 1; i++) {
+            if (s.startsWith("++", i)) {
+
+                String t = s.substring(0, i) + "--" + s.substring(i + 2);
+
+                if (!canWin(t)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * @param s
+     * @return
+     */
+    public boolean canWinV2(String s) {
+        if (s == null || s.isEmpty()) {
+            return false;
+        }
+        boolean[] states = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '+') {
+                states[i] = true;
+            }
+        }
+        return canSearch(states);
+
+    }
+
+    private boolean canSearch(boolean[] states) {
+        for (int i = 0; i < states.length - 1; i++) {
+            if (states[i] && states[i + 1]) {
+                states[i] = false;
+                states[i + 1] = false;
+
+                if (!canSearch(states)) {
+                    states[i] = true;
+                    states[i + 1] = true;
+                    return true;
+                } else {
+                    states[i] = true;
+                    states[i + 1] = true;
+                }
+            }
+
+        }
+        return false;
     }
 
 
