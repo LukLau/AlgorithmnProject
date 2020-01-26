@@ -1,5 +1,6 @@
 package org.dora.algorithm.geeksforgeek;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
@@ -8,8 +9,9 @@ import java.util.PriorityQueue;
  */
 public class MedianFinder {
 
-    private PriorityQueue<Integer> max = new PriorityQueue<>();
-    private PriorityQueue<Integer> min = new PriorityQueue<>();
+    private PriorityQueue<Long> large = new PriorityQueue<>();
+
+    private PriorityQueue<Long> small = new PriorityQueue<>(Comparator.reverseOrder());
 
     /**
      * initialize your data structure here.
@@ -18,21 +20,24 @@ public class MedianFinder {
     }
 
     public static void main(String[] args) {
-
+        MedianFinder medianFinder = new MedianFinder();
     }
 
     public void addNum(int num) {
-        max.offer(num);
-        min.offer(-max.poll());
-        if (max.size() < min.size()) {
-            max.offer(-min.poll());
+
+        large.add((long) num);
+
+        small.add(large.poll());
+
+        if (small.size() > large.size()) {
+            large.add(small.poll());
         }
     }
 
     public double findMedian() {
-        return max.size() > min.size()
-                ? max.peek()
-                : (max.peek() - min.peek()) / 2.0;
+        return large.size() > small.size() ?
+                large.peek() : (large.peek() + small.peek()) / 2.0;
     }
+
 
 }

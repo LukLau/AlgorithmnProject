@@ -9,6 +9,9 @@
 故需考虑记录已经计算的值或者状态、减少次数
 
 > [除法问题](https://leetcode.com/problems/divide-two-integers/)
+
+> [数据流中的中位数](https://leetcode.com/problems/find-median-from-data-stream/)
+key point: 考虑使用双队列来维持查询操作
  
 ## 深度、广度优先问题
 > 深度遍历靠栈来实现
@@ -170,7 +173,11 @@ key point: digit = 1 + (n-1) mod 9
 
 > [在数组中找到重复的数字](https://leetcode.com/problems/find-the-duplicate-number/solution/)
 key point: Floyd's Tortoise and Hare
-不允许使用任务额外空间 
+不允许使用任务额外空间
+
+> [最佳见面地点](http://www.lintcode.com/problem/best-meeting-point/description)
+key point:曼哈顿距离法
+ 
 ----
 ## 位运算
 ------

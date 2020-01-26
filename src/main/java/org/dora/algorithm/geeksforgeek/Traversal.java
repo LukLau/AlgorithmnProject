@@ -14,14 +14,7 @@ import java.util.*;
  */
 public class Traversal {
 
-    public static void main(String[] args) {
-
-        Traversal traversal = new Traversal();
-
-
-        String str = "---+++-+++-+";
-        traversal.generatePossibleNextMoves(str);
-    }
+    private int longest = 0;
 
     /**
      * 79. Word Search
@@ -1718,6 +1711,224 @@ public class Traversal {
         return false;
     }
 
+    public static void main(String[] args) {
+
+        Traversal traversal = new Traversal();
+        String s = "()())()";
+        List<String> list = traversal.removeInvalidParentheses(s);
+        System.out.println(list.toString());
+    }
+
+    /**
+     * #298 Binary Tree Longest Consecutive Sequence
+     *
+     * @param root: the root of binary tree
+     * @return: the length of the longest consecutive sequence path
+     */
+    public int longestConsecutive(TreeNode root) {
+        // write your code here
+        if (root == null) {
+            return 0;
+        }
+        return intervalLongest(root, null, 0);
+    }
+
+    private int intervalLongest(TreeNode root, TreeNode parent, int lenWithoutRoot) {
+        if (root == null) {
+            return 0;
+        }
+        int len = (parent != null && parent.val + 1 == root.val) ? lenWithoutRoot + 1 : 1;
+        int left = intervalLongest(root.left, root, len);
+        int right = intervalLongest(root.right, root, len);
+        return Math.max(len, Math.max(left, right));
+    }
+
+    public int longestConsecutiveV2(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        intervalLongestV2(root);
+
+        return longest;
+    }
+
+    private int intervalLongestV2(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = intervalLongestV2(root.left);
+
+        int right = intervalLongestV2(root.right);
+
+        int tmp = 1;
+
+        if (root.left != null && root.left.val == root.val + 1) {
+            tmp = Math.max(tmp, left + 1);
+        }
+        if (root.right != null && root.right.val == root.val + 1) {
+            tmp = Math.max(tmp, right + 1);
+        }
+        if (tmp > longest) {
+            longest = tmp;
+        }
+        return tmp;
+    }
+
+
+    /**
+     * 299. Bulls and Cows
+     *
+     * @param secret
+     * @param guess
+     * @return
+     */
+    public String getHint(String secret, String guess) {
+        if (secret == null || guess == null) {
+            return "";
+        }
+        if (secret.length() != guess.length()) {
+            return "";
+        }
+        int bulls = 0;
+        int crows = 0;
+        int[] dx = new int[10];
+        int[] dy = new int[10];
+        for (int i = 0; i < secret.length(); i++) {
+            int x = Character.getNumericValue(secret.charAt(i));
+
+            int y = Character.getNumericValue(guess.charAt(i));
+
+            if (x == y) {
+                bulls++;
+            }
+            dx[x]++;
+
+            dy[y]++;
+        }
+        for (int i = 0; i < dx.length; i++) {
+            crows += Math.min(dx[i], dy[i]);
+        }
+        return bulls + "A" + (crows - bulls) + "B";
+
+    }
+
+
+    public String getHintV2(String secret, String guess) {
+        if (secret == null || guess == null) {
+            return "";
+        }
+        int[] count = new int[10];
+        int bulls = 0;
+        int crows = 0;
+        for (int i = 0; i < secret.length(); i++) {
+            int s = Character.getNumericValue(secret.charAt(i));
+
+            int g = Character.getNumericValue(guess.charAt(i));
+
+            if (s == g) {
+                bulls++;
+            } else {
+                if (count[s]++ < 0) {
+                    crows++;
+                }
+                if (count[g]-- > 0) {
+                    crows++;
+                }
+            }
+        }
+        return bulls + "A" + crows + "B";
+    }
+
+
+    /**
+     * 300. Longest Increasing Subsequence
+     *
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int len = nums.length;
+
+        int[] dp = new int[len];
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i] && dp[i] < dp[j] + 1) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < dp.length; i++) {
+
+            result = Math.max(result, dp[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 301. Remove Invalid Parentheses
+     */
+    public List<String> removeInvalidParentheses(String s) {
+        if (s == null || s.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add(s);
+        visited.add(s);
+        boolean found = false;
+        while (!queue.isEmpty()) {
+            String poll = queue.poll();
+
+            if (checkValid(poll)) {
+                result.add(poll);
+                found = true;
+            }
+
+            if (found) {
+                continue;
+            }
+
+            for (int i = 0; i < poll.length(); i++) {
+                char c = poll.charAt(i);
+                if (c != '(' && c != ')') {
+                    continue;
+                }
+                String tmp = poll.substring(0, i) + poll.substring(i + 1);
+                if (!visited.contains(tmp)) {
+                    queue.offer(tmp);
+                    visited.add(tmp);
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean checkValid(String s) {
+        if (s == null || s.isEmpty()) {
+            return true;
+        }
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c != '(' && c != ')') {
+                continue;
+            }
+            if (c == '(') {
+                count++;
+            }
+            if (c == ')' && count-- == 0) {
+                return false;
+            }
+        }
+        return count == 0;
+    }
+
 
     // ---------- 深度优先遍历DFS---------//
 
@@ -2140,6 +2351,46 @@ public class Traversal {
             res = v1[a] + " Hundred" + (b != 0 ? " " + res : "");
         }
         return res;
+    }
+
+    /**
+     * #296 Best Meeting Point
+     *
+     * @param grid: a 2D grid
+     * @return: the minimize travel distance
+     */
+    public int minTotalDistance(int[][] grid) {
+        // Write your code here
+        if (grid == null || grid.length == 0) {
+            return -1;
+        }
+        List<Integer> rowIndex = new ArrayList<>();
+        List<Integer> columnIndex = new ArrayList<>();
+
+        for (int i = 0; i < grid.length; i++) {
+
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == 1) {
+                    rowIndex.add(i);
+                    columnIndex.add(j);
+                }
+            }
+        }
+        return getIndexMediaValue(rowIndex) + getIndexMediaValue(columnIndex);
+    }
+
+
+    private int getIndexMediaValue(List<Integer> data) {
+        Collections.sort(data);
+        int begin = 0;
+        int end = data.size() - 1;
+        int result = 0;
+        while (begin < end) {
+            result += data.get(end) - data.get(begin);
+            end--;
+            begin++;
+        }
+        return result;
     }
 
 
