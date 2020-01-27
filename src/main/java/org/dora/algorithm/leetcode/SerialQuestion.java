@@ -1,4 +1,4 @@
-package org.dora.algorithm.geeksforgeek;
+package org.dora.algorithm.leetcode;
 
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.TreeNode;
@@ -103,6 +103,19 @@ public class SerialQuestion {
             }
         }
         return result;
+    }
+
+    /**
+     * 309. Best Time to Buy and Sell Stock with Cooldown
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfitIV(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        return Integer.MAX_VALUE;
     }
 
 

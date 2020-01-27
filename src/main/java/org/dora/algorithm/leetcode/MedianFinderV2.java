@@ -1,4 +1,4 @@
-package org.dora.algorithm.geeksforgeek;
+package org.dora.algorithm.leetcode;
 
 import java.util.ArrayList;
 import java.util.List;

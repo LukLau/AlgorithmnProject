@@ -1,4 +1,4 @@
-package org.dora.algorithm.geeksforgeek;
+package org.dora.algorithm.leetcode;
 
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.Node;
@@ -18,9 +18,8 @@ public class Traversal {
 
     public static void main(String[] args) {
         Traversal traversal = new Traversal();
-        String s = "()())()";
-        List<String> list = traversal.removeInvalidParenthesesV2(s);
-        System.out.println(list.toString());
+        String s = "101";
+        traversal.isAdditiveNumber(s);
     }
 
 
@@ -2389,7 +2388,6 @@ public class Traversal {
 
 
     /**
-     * todo
      * 306. Additive Number
      *
      * @param num
@@ -2397,12 +2395,60 @@ public class Traversal {
      */
     public boolean isAdditiveNumber(String num) {
         if (num == null || num.isEmpty()) {
-            return false;
+            return true;
         }
         int len = num.length();
         for (int i = 1; i <= len / 2; i++) {
+            if (num.charAt(0) == '0' && i >= 2) {
+                return false;
+            }
+            for (int j = i + 1; len - j >= j - i && len - j >= i; j++) {
+                if (num.charAt(i) == '0' && j - i >= 2) {
+                    break;
+                }
+                long num1 = Long.parseLong(num.substring(0, i));
+                long num2 = Long.parseLong(num.substring(i, j));
+                if (isAdditive(num.substring(j), num1, num2)) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+
+    private boolean isAdditive(String str, long num1, long num2) {
+        if ("".equals(str)) {
+            return true;
+        }
+        long sum = num1 + num2;
+        String s = Long.toString(sum);
+        if (!str.startsWith(s)) {
+            return false;
+        }
+        return isAdditive(str.substring(s.length()), num2, sum);
+    }
 
 
+    public boolean isAdditiveNumberV2(String num) {
+        if (num == null || num.isEmpty()) {
+            return true;
+        }
+        int len = num.length();
+        for (int i = 1; i <= len / 2; i++) {
+            if (num.charAt(0) == '0' && i >= 2) {
+                break;
+            }
+            for (int j = 1; Math.max(i, j) <= len - i - j; j++) {
+                if (num.charAt(i) == '0' && j >= 2) {
+                    break;
+                }
+                long num1 = Long.parseLong(num.substring(0, i));
+                long num2 = Long.parseLong(num.substring(i, i + j));
+                if (isAdditive(num.substring(i + j), num1, num2)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

@@ -65,6 +65,8 @@ key point: dp[i-1][j-1], dp[i-1][j], dp[i][j-1];
 
 > [房子刷漆问题](https://www.lintcode.com/problem/paint-house/description)
 
+> [卖股票问题IV](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/discuss/75928/Share-my-DP-solution-(By-State-Machine-Thinking))
+
 ## 贪心问题
 
 
@@ -217,3 +219,7 @@ key point: 考虑用下标移动来优化
 
 # 并集查找 Union Find
 > [岛屿个数II](http://www.lintcode.com/problem/number-of-islands-ii/description)
+
+
+# 复杂逻辑
+> [添加剂数字](https://leetcode.com/problems/additive-number/)

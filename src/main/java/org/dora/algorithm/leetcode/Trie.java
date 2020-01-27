@@ -1,4 +1,4 @@
-package org.dora.algorithm.geeksforgeek;
+package org.dora.algorithm.leetcode;
 
 /**
  * @author liulu12@xiaomi.com

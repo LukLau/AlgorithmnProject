@@ -1,4 +1,4 @@
-package org.dora.algorithm.geeksforgeek;
+package org.dora.algorithm.leetcode;
 
 import java.util.HashMap;
 import java.util.Map;

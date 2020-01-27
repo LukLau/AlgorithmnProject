@@ -596,6 +596,22 @@ public class SecondPage {
         return result;
     }
 
+
+    /**
+     * 309. Best Time to Buy and Sell Stock with Cooldown
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfitIV(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        return 1;
+    }
+
+
     /**
      * 125. Valid Palindrome
      *
