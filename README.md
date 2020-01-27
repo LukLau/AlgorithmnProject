@@ -34,6 +34,8 @@ key point: 考虑使用双队列来维持查询操作
 
 > [生命游戏](https://leetcode.com/problems/game-of-life/solution/)
 
+> [包裹黑色像素点的最小矩形](http://www.lintcode.com/problem/smallest-rectangle-enclosing-black-pixels/description)
+
 
 ## 连续序列问题
 > [数组中连续最大乘积 keyCase: 考虑到连续序列](https://leetcode.com/problems/maximum-product-subarray/)
@@ -177,6 +179,9 @@ key point: Floyd's Tortoise and Hare
 
 > [最佳见面地点](http://www.lintcode.com/problem/best-meeting-point/description)
 key point:曼哈顿距离法
+
+> [范围内和查询](https://leetcode.com/problems/range-sum-query-mutable/solution/)
+
  
 ----
 ## 位运算
@@ -208,3 +213,7 @@ key point: 有向连接图 排序
 
 > [移动数组中0的个数](https://leetcode.com/problems/move-zeroes/submissions/)
 key point: 考虑用下标移动来优化
+
+
+# 并集查找 Union Find
+> [岛屿个数II](http://www.lintcode.com/problem/number-of-islands-ii/description)

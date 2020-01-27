@@ -2,6 +2,7 @@ package org.dora.algorithm.geeksforgeek;
 
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.Node;
+import org.dora.algorithm.datastructe.Point;
 import org.dora.algorithm.datastructe.TreeNode;
 
 import java.util.*;
@@ -13,6 +14,15 @@ import java.util.*;
  * @date 2019/11/5
  */
 public class Traversal {
+
+
+    public static void main(String[] args) {
+        Traversal traversal = new Traversal();
+        String s = "()())()";
+        List<String> list = traversal.removeInvalidParenthesesV2(s);
+        System.out.println(list.toString());
+    }
+
 
     private int longest = 0;
 
@@ -1711,14 +1721,6 @@ public class Traversal {
         return false;
     }
 
-    public static void main(String[] args) {
-
-        Traversal traversal = new Traversal();
-        String s = "()())()";
-        List<String> list = traversal.removeInvalidParentheses(s);
-        System.out.println(list.toString());
-    }
-
     /**
      * #298 Binary Tree Longest Consecutive Sequence
      *
@@ -1927,6 +1929,40 @@ public class Traversal {
             }
         }
         return count == 0;
+    }
+
+
+    public List<String> removeInvalidParenthesesV2(String s) {
+        List<String> ans = new ArrayList<>();
+        remove(s, ans, 0, 0, new char[]{'(', ')'});
+        return ans;
+    }
+
+    private void remove(String s, List<String> ans, int lastI, int lastJ, char[] par) {
+        for (int stack = 0, i = lastI; i < s.length(); i++) {
+
+            if (s.charAt(i) == '(') {
+                stack++;
+            }
+            if (s.charAt(i) == ')') {
+                stack--;
+            }
+            if (stack >= 0) {
+                continue;
+            }
+            for (int j = lastJ; j <= i; j++) {
+                if (s.charAt(j) == par[1] && (j == lastJ || s.charAt(j - 1) != par[1])) {
+                    remove(s.substring(0, j) + s.substring(j + 1), ans, i, j, par);
+                }
+            }
+            return;
+        }
+        String reversed = new StringBuffer(s).reverse().toString();
+        if (par[0] == '(') {
+            remove(reversed, ans, 0, 0, new char[]{')', '('});
+        } else {
+            ans.add(reversed);
+        }
     }
 
 
@@ -2297,6 +2333,78 @@ public class Traversal {
         values.add(root.val);
         inorderTraversal(values, root.right);
 
+    }
+
+
+    /**
+     * #302 Smallest Rectangle Enclosing Black Pixels
+     *
+     * @param image
+     * @param x
+     * @param y
+     * @return
+     */
+    public int minArea(char[][] image, int x, int y) {
+        if (image == null || image.length == 0) {
+            return 0;
+        }
+        int row = image.length;
+
+        int column = image[0].length;
+
+        Queue<Point> queue = new LinkedList<>();
+
+        queue.offer(new Point(x, y));
+
+        image[x][y] = 0;
+
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+
+        int[][] moves = {{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
+
+        while (!queue.isEmpty()) {
+            Point poll = queue.poll();
+
+            minX = Math.min(minX, poll.x);
+            minY = Math.min(minY, poll.y);
+
+            maxX = Math.max(maxX, poll.x);
+            maxY = Math.max(maxY, poll.y);
+            for (int i = 0; i < moves.length; i++) {
+                int nx = moves[i][0] + poll.x;
+                int ny = moves[i][1] + poll.y;
+
+                if (nx >= 0 && nx < row && ny >= 0 && ny < column && image[nx][ny] == '1') {
+                    queue.offer(new Point(nx, ny));
+                    image[nx][ny] = 0;
+                }
+            }
+        }
+        return (maxX - minX + 1) * (maxY - minY + 1);
+    }
+
+
+    /**
+     * todo
+     * 306. Additive Number
+     *
+     * @param num
+     * @return
+     */
+    public boolean isAdditiveNumber(String num) {
+        if (num == null || num.isEmpty()) {
+            return false;
+        }
+        int len = num.length();
+        for (int i = 1; i <= len / 2; i++) {
+
+
+        }
+        return false;
     }
 
 
