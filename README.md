@@ -223,3 +223,8 @@ key point: 考虑用下标移动来优化
 
 # 复杂逻辑
 > [添加剂数字](https://leetcode.com/problems/additive-number/)
+
+
+# O(logN) 算法
+# [旋转数组中的最小数字](https://www.nowcoder.com/practice/9f3231a991af4f55b95579b44b7a01ba?tpId=13&tqId=11159&tPage=1&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
+> key point : 数组是非递减 可能存在重复数值

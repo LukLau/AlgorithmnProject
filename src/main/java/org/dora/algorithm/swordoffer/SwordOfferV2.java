@@ -13,8 +13,8 @@ public class SwordOfferV2 {
 
     public static void main(String[] args) {
         SwordOfferV2 swordOfferV2 = new SwordOfferV2();
-        int[] array = new int[]{3, 4, 5, 1, 2};
-        swordOfferV2.minNumberInRotateArray(array);
+        int[] array = new int[]{1, 2, 3, 4, 5, 6, 7};
+        swordOfferV2.reOrderArray(array);
     }
 
 
@@ -209,7 +209,7 @@ public class SwordOfferV2 {
      */
     public int minNumberInRotateArray(int[] array) {
         if (array == null || array.length == 0) {
-            return Integer.MIN_VALUE;
+            return 0;
         }
         int left = 0;
         int right = array.length - 1;
@@ -226,6 +226,245 @@ public class SwordOfferV2 {
             }
         }
         return array[left];
+    }
+
+
+    /**
+     * [1,2,3,1,1,1,1,1,1]
+     * <p>
+     * [2,3,1,1,1]
+     *
+     * @param array
+     * @return
+     */
+    public int minNumberInRotateArrayV2(int[] array) {
+        if (array == null || array.length == 0) {
+            return 0;
+        }
+        int left = 0;
+        int right = array.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (array[mid] <= array[right]) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return array[left];
+    }
+
+
+    /**
+     * 斐波那切数列
+     *
+     * @param n
+     * @return
+     */
+    public int Fibonacci(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return 1;
+        }
+        if (n == 2) {
+            return 2;
+        }
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+
+    public int FibonacciV2(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        if (n <= 2) {
+            return 1;
+        }
+        int sum1 = 1;
+        int sum2 = 1;
+        int result = 0;
+        for (int i = 3; i <= n; i++) {
+            result = sum1 + sum2;
+            sum1 = sum2;
+            sum2 = result;
+        }
+        return result;
+    }
+
+    /**
+     * 跳台阶
+     *
+     * @param target
+     * @return
+     */
+    public int JumpFloor(int target) {
+        if (target == 1) {
+            return 1;
+        }
+        if (target == 2) {
+            return 2;
+        }
+        return JumpFloor(target - 1) + JumpFloor(target - 2);
+    }
+
+
+    /**
+     * 变态跳台阶
+     *
+     * @param target
+     * @return
+     */
+    public int JumpFloorII(int target) {
+        if (target <= 0) {
+            return 0;
+        }
+        if (target == 1) {
+            return 1;
+        }
+        if (target == 2) {
+            return 2;
+        }
+        return 2 * JumpFloor(target - 1);
+    }
+
+    /**
+     * 二进制中1的个数
+     *
+     * @param n
+     * @return
+     */
+    public int NumberOf1(int n) {
+        int result = 0;
+        while (n != 0) {
+            result++;
+            n = n & (n - 1);
+        }
+        return result;
+    }
+
+
+    /**
+     * 数值的整数次方
+     *
+     * @param base
+     * @param exponent
+     * @return
+     */
+    public double Power(double base, int exponent) {
+        if (exponent == 0) {
+            return 1;
+        }
+        if (exponent == 1) {
+            return base;
+        }
+        if (exponent < 0) {
+            exponent = -exponent;
+            base = 1 / base;
+        }
+        return (exponent % 2 == 0) ? this.Power(base * base, exponent / 2) : base * this.Power(base * base, exponent / 2);
+    }
+
+
+    public double PowerV2(double base, int exponent) {
+        if (exponent == 0) {
+            return 1;
+        }
+        double result = 1.0;
+        int absExponent = Math.abs(exponent);
+        while (absExponent != 0) {
+            if ((absExponent % 2) != 0) {
+                result *= base;
+            }
+            base *= base;
+            absExponent >>= 1;
+        }
+        return exponent < 0 ? 1 / result : result;
+    }
+
+
+    /**
+     * 调整数组顺序使奇数位于偶数前面
+     *
+     * @param array
+     */
+    public void reOrderArray(int[] array) {
+        if (array == null || array.length == 0) {
+            return;
+        }
+        int len = array.length;
+        int[] result = new int[len];
+        int index = 0;
+        for (int num : array) {
+            if (num % 2 != 0) {
+                result[index++] = num;
+            }
+        }
+        for (int num : array) {
+            if (num % 2 == 0) {
+                result[index++] = num;
+            }
+        }
+        array = result;
+    }
+
+    public void reOrderArrayV2(int[] array) {
+        if (array == null || array.length == 0) {
+            return;
+        }
+        for (int i = 0; i < array.length; i++) {
+            for (int j = array.length - 1; j > i; j--) {
+                if (array[j] % 2 == 1 && array[j - 1] % 2 == 0) {
+                    swap(array, j, j - 1);
+                }
+            }
+        }
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int val = nums[i];
+        nums[i] = nums[j];
+        nums[j] = val;
+    }
+
+
+    /**
+     * 1 - > 2 - > 3 - > 4
+     * 2
+     * 链表中倒数第k个结点
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode FindKthToTail(ListNode head, int k) {
+        if (head == null || k <= 0) {
+            return null;
+        }
+        ListNode fast = head;
+        for (int i = 0; i < k - 1; i++) {
+            fast = fast.next;
+            if (fast == null) {
+                return null;
+            }
+        }
+        ListNode slow = head;
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+
+
+    /**
+     * 反转链表
+     *
+     * @param head
+     * @return
+     */
+    public ListNode ReverseList(ListNode head) {
+        return null;
     }
 
 
