@@ -463,8 +463,161 @@ public class SwordOfferV2 {
      * @param head
      * @return
      */
+    public ListNode ReverseListV2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode prev = null;
+        ListNode current = head;
+        while (current != null) {
+            ListNode tmp = current.next;
+            current.next = prev;
+            prev = current;
+            current = tmp;
+        }
+        return prev;
+    }
+
+
     public ListNode ReverseList(ListNode head) {
-        return null;
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode listNode = ReverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return listNode;
+    }
+
+
+    /**
+     * 合并两个排序的链表
+     *
+     * @param list1
+     * @param list2
+     * @return
+     */
+    public ListNode Merge(ListNode list1, ListNode list2) {
+        if (list1 == null && list2 == null) {
+            return null;
+        }
+        if (list1 == null) {
+            return list2;
+        }
+        if (list2 == null) {
+            return list1;
+        }
+        if (list1.val <= list2.val) {
+            list1.next = this.Merge(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = this.Merge(list1, list2.next);
+            return list2;
+        }
+    }
+
+
+    /**
+     * 树的子结构
+     *
+     * @param root1
+     * @param root2
+     * @return
+     */
+    public boolean HasSubtree(TreeNode root1, TreeNode root2) {
+        if (root1 == null || root2 == null) {
+            return false;
+        }
+        return isSubTree(root1, root2) || HasSubtree(root1.left, root2) || HasSubtree(root1.right, root2);
+
+    }
+
+    private boolean isSubTree(TreeNode root, TreeNode node) {
+        if (root == null) {
+            return true;
+        }
+        if (node == null) {
+            return false;
+        }
+        if (root.val != node.val) {
+            return false;
+        }
+        return isSubTree(root.left, node.left) && isSubTree(root.right, node.right);˚
+    }
+
+
+    /**
+     * 树的反转
+     *
+     * @param root
+     */
+    public void Mirror(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        TreeNode tmp = root.left;
+        root.left = root.right;
+        root.right = tmp;
+        Mirror(root.left);
+        Mirror(root.right);
+    }
+
+
+    /**
+     * 打印螺旋矩阵
+     *
+     * @param matrix
+     * @return
+     */
+    public ArrayList<Integer> printMatrix(int[][] matrix) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (matrix == null || matrix.length == 0) {
+            return result;
+        }
+        int left = 0;
+        int right = matrix[0].length - 1;
+        int top = 0;
+        int bottom = matrix.length - 1;
+        while (left <= right && top <= bottom) {
+            for (int j = left; j <= right; j++) {
+                result.add(matrix[top][j]);
+            }
+            for (int i = top + 1; i <= bottom; i++) {
+                result.add(matrix[i][right]);
+            }
+            if (top != bottom) {
+                for (int j = right - 1; j >= left; j--) {
+                    result.add(matrix[bottom][j]);
+                }
+            }
+            if (left != right) {
+                for (int i = bottom - 1; i > top; i--) {
+                    result.add(matrix[i][left]);
+                }
+            }
+            left++;
+            top++;
+            bottom--;
+            right--;
+        }
+        return result;
+    }
+
+
+    /**
+     * 栈的压入、弹出序列
+     *
+     * @param pushA
+     * @param popA
+     * @return
+     */
+    public boolean IsPopOrder(int[] pushA, int[] popA) {
+        if (pushA == null || popA == null || pushA.length == 0 || popA.length == 0) {
+            return false;
+        }
+        int index = 0;
+        return false;
+
     }
 
 
