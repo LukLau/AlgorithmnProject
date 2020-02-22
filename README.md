@@ -80,6 +80,8 @@ key point: dp[i-1][j-1], dp[i-1][j], dp[i][j-1];
 * **n & 1 相当于 对2取模操作 相当于每次获取二进制最末尾一位数字值**
 * **n & 1 并且 n 无符号右移相当于二进制数据反转**
 > [二进制数据反转并且满足32数](https://leetcode.com/problems/reverse-bits/)
+> [禁止使用循环求累计和](https://www.nowcoder.com/practice/7a0da8fc483247ff8800059e12d7caf1?tpId=13&tqId=11200&rp=3&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
+> [禁止使用加减乘除](https://www.nowcoder.com/practice/59ac416b4b944300b617d4f7f111b215?tpId=13&tqId=11201&rp=3&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
 
 
 
@@ -108,6 +110,9 @@ key point: dp[i-1][j-1], dp[i-1][j], dp[i][j-1];
 * [窗口最小数量](https://leetcode.com/problems/minimum-size-subarray-sum/)
 
 * [会议室区间数量]()
+
+* [数据流中的中位数](https://www.nowcoder.com/practice/9be0172896bd43948f8a32fb954e1be1?tpId=13&tqId=11216&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking)
+key case : 通过大顶堆、小顶堆来维护数据流 两个堆的堆顶就是中位数
 
 
 # 二分搜索
