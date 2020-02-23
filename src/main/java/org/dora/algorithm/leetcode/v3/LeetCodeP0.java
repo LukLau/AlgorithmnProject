@@ -1,4 +1,4 @@
-package org.dora.algorithm.leetcode;
+package org.dora.algorithm.leetcode.v3;
 
 import org.dora.algorithm.datastructe.ListNode;
 
@@ -8,11 +8,11 @@ import java.util.*;
  * @author liulu12@xiaomi.com
  * @date 2020/2/22
  */
-public class LeetCodeV3 {
+public class LeetCodeP0 {
 
 
     public static void main(String[] args) {
-        LeetCodeV3 codeV3 = new LeetCodeV3();
+        LeetCodeP0 codeV3 = new LeetCodeP0();
 
         int[] nums = new int[]{-1, 0, 1, 2, -1, -4};
         codeV3.threeSum(nums);
@@ -605,6 +605,156 @@ public class LeetCodeV3 {
     public ListNode removeNthFromEnd(ListNode head, int n) {
         if (head == null || n <= 0) {
             return null;
+        }
+        ListNode root = new ListNode(0);
+        root.next = head;
+        ListNode fast = root;
+        ListNode slow = root;
+        for (int i = 0; i < n; i++) {
+            fast = fast.next;
+        }
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        ListNode node = slow.next;
+
+        slow.next = node.next;
+
+
+        node.next = null;
+
+        return root.next;
+    }
+
+
+    /**
+     * 20. Valid Parentheses
+     *
+     * @param s
+     * @return
+     */
+    public boolean isValid(String s) {
+        if (s == null || s.isEmpty()) {
+            return false;
+        }
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < s.length(); i++) {
+
+            char character = s.charAt(i);
+
+            if (character == '(') {
+                stack.push(')');
+            } else if (character == '[') {
+                stack.push(']');
+            } else if (character == '{') {
+                stack.push('}');
+            } else {
+                if (stack.isEmpty() || stack.peek() != character) {
+                    return false;
+                }
+                stack.pop();
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    /**
+     * 21. Merge Two Sorted Lists
+     *
+     * @param l1
+     * @param l2
+     * @return
+     */
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null && l2 == null) {
+            return null;
+        }
+        if (l1 == null || l2 == null) {
+            return l1 == null ? l2 : l1;
+        }
+        if (l1.val <= l2.val) {
+            l1.next = mergeTwoLists(l1.next, l2);
+
+            return l1;
+        } else {
+            l2.next = mergeTwoLists(l1, l2.next);
+            return l2;
+        }
+    }
+
+
+    /**
+     * 22. Generate Parentheses
+     *
+     * @param n
+     * @return
+     */
+    public List<String> generateParenthesis(int n) {
+        if (n <= 0) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        intervalGenerate(result, 0, 0, "", n);
+        return result;
+    }
+
+    private void intervalGenerate(List<String> result, int open, int close, String str, int n) {
+        if (str.length() == 2 * n) {
+            result.add(str);
+            return;
+        }
+        if (open < n) {
+            intervalGenerate(result, open + 1, close, str + "(", n);
+        }
+        if (close < open) {
+            intervalGenerate(result, open, close + 1, str + ")", n);
+        }
+    }
+
+
+    /**
+     * 23. Merge k Sorted Lists
+     *
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) {
+            return null;
+        }
+        PriorityQueue<ListNode> priorityQueue = new PriorityQueue<>(lists.length, Comparator.comparingInt(o -> o.val));
+
+        for (ListNode list : lists) {
+            priorityQueue.offer(list);
+        }
+        ListNode root = new ListNode(0);
+        ListNode dummy = root;
+
+        while (!priorityQueue.isEmpty()) {
+            ListNode poll = priorityQueue.poll();
+            dummy.next = poll;
+
+            dummy = dummy.next;
+
+            if (poll.next != null) {
+                priorityQueue.offer(poll.next);
+            }
+        }
+        return root.next;
+    }
+
+
+    /**
+     * 24. Swap Nodes in Pairs
+     *
+     * @param head
+     * @return
+     */
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
         }
         return null;
     }
