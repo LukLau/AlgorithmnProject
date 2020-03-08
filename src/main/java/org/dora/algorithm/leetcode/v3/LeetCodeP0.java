@@ -12,8 +12,9 @@ public class LeetCodeP0 {
 
     public static void main(String[] args) {
         LeetCodeP0 codeV3 = new LeetCodeP0();
-        String tmp = " 005047e+6";
-        codeV3.isNumber(tmp);
+        String[] words = new String[]{"What", "must", "be", "acknowledgment", "shall", "be"};
+        int maxWidth = 16;
+        codeV3.fullJustify(words, maxWidth);
     }
 
     /**
@@ -2156,44 +2157,321 @@ public class LeetCodeP0 {
             return false;
         }
         s = s.trim();
-
         if (s.isEmpty()) {
             return false;
         }
-        boolean hasSeenE = false;
-        boolean seenNumber = false;
         boolean numberAfterE = true;
+        boolean seenNumber = false;
         boolean seenDit = false;
+        boolean seenE = false;
+
         int len = s.length();
         for (int i = 0; i < len; i++) {
             char word = s.charAt(i);
             if (word >= '0' && word <= '9') {
-
                 seenNumber = true;
                 numberAfterE = true;
             } else if (word == 'e' || word == 'E') {
-                if (i == 0) {
+
+                if (i == 0 || seenE || !seenNumber) {
                     return false;
                 }
-                if (hasSeenE || !seenNumber) {
-                    return false;
-                }
-                hasSeenE = true;
+                seenE = true;
                 numberAfterE = false;
-            } else if (word == '-' || word == '+') {
-                if (i != 0 && (s.charAt(i - 1) != 'e' && s.charAt(i - 1) != 'E')) {
+            } else if (word == '.') {
+                if (seenDit) {
                     return false;
                 }
-            } else if (word == '.') {
-                if (seenDit || hasSeenE) {
+                if (seenE) {
                     return false;
                 }
                 seenDit = true;
+            } else if (word == '-' || word == '+') {
+                if (i != 0 && s.charAt(i - 1) != 'e' && s.charAt(i - 1) != 'E') {
+                    return false;
+                }
             } else {
                 return false;
             }
         }
         return numberAfterE && seenNumber;
+    }
+
+
+    /**
+     * 66. Plus One
+     *
+     * @param digits
+     * @return
+     */
+    public int[] plusOne(int[] digits) {
+        if (digits == null || digits.length == 0) {
+            return new int[]{};
+        }
+        for (int i = digits.length - 1; i >= 0; i--) {
+            if (digits[i] == 9) {
+                digits[i] = 0;
+            } else {
+                digits[i]++;
+                return digits;
+            }
+        }
+        int[] ans = new int[digits.length + 1];
+        ans[0] = 1;
+        return ans;
+    }
+
+    /**
+     * 67. Add Binary
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public String addBinary(String a, String b) {
+        if (a == null || b == null) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        int m = a.length();
+        int n = b.length();
+        m--;
+        n--;
+        int carry = 0;
+        while (m >= 0 || n >= 0 || carry != 0) {
+            int value = (m >= 0 ? Character.getNumericValue(a.charAt(m--)) : 0) + (n >= 0 ? Character.getNumericValue(b.charAt(n--)) : 0) + carry;
+            builder.append(value % 2);
+            carry = value / 2;
+        }
+        String result = builder.reverse().toString();
+        return result.isEmpty() ? "0" : result;
+
+    }
+
+    /**
+     * 68. Text Justification
+     *
+     * @param words
+     * @param maxWidth
+     * @return
+     */
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        if (words == null || words.length == 0 || maxWidth == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ans = new ArrayList<>();
+
+        int startIndex = 0;
+
+        while (startIndex < words.length) {
+
+            int endIndex = startIndex;
+
+            int line = 0;
+
+            while (endIndex < words.length && line + words[endIndex].length() <= maxWidth) {
+
+                line += words[endIndex].length() + 1;
+
+                endIndex++;
+            }
+
+            boolean lastRow = endIndex == words.length;
+
+            int countOfWord = endIndex - startIndex;
+
+            int blankLine = maxWidth - line + 1;
+
+            StringBuilder builder = new StringBuilder();
+            if (countOfWord == 1) {
+                builder.append(words[startIndex]);
+            } else {
+                int blankWord = lastRow ? 1 : 1 + blankLine / (countOfWord - 1);
+                int extraWord = lastRow ? 0 : blankLine % (countOfWord - 1);
+                builder.append(construct(startIndex, endIndex, words, blankWord, extraWord));
+            }
+            String tmp = justify(builder, maxWidth);
+
+            startIndex = endIndex;
+            ans.add(tmp);
+        }
+        return ans;
+    }
+
+    private String justify(StringBuilder builder, int maxWidth) {
+        String result = builder.toString();
+        while (result.length() < maxWidth) {
+            result = result + " ";
+        }
+        while (result.length() > maxWidth) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
+    }
+
+    private String construct(int startIndex, int endIndex, String[] words, int blankWord, int extraWord) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = startIndex; i < endIndex; i++) {
+            builder.append(words[i]);
+            for (int tmp = 0; tmp < blankWord; tmp++) {
+                builder.append(" ");
+            }
+            if (extraWord-- > 0) {
+                builder.append(" ");
+            }
+        }
+        return builder.toString();
+    }
+
+    public List<String> fullJustifyV2(String[] words, int maxWidth) {
+        if (words == null || words.length == 0 || maxWidth <= 0) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        int startIndex = 0;
+        while (startIndex < words.length) {
+            int line = 0;
+            int endIndex = startIndex;
+            while (endIndex < words.length && line + words[endIndex].length() <= maxWidth) {
+                line += words[endIndex].length() + 1;
+                endIndex++;
+            }
+            boolean lastRow = endIndex == words.length;
+            StringBuilder builder = new StringBuilder();
+            if (lastRow) {
+                builder.append(words[startIndex]);
+            } else {
+            }
+            startIndex = endIndex;
+        }
+        return result;
+    }
+
+
+    /**
+     * 69. Sqrt(x)
+     *
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        double precision = 0.000001;
+
+        double result = x;
+        while (result * result - x > precision) {
+            result = (result + x / result) / 2;
+        }
+        return (int) result;
+    }
+
+    /**
+     * 70. Climbing Stairs
+     *
+     * @param n
+     * @return
+     */
+    public int climbStairs(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+        if (n <= 1) {
+            return 1;
+        }
+        if (n <= 2) {
+            return 2;
+        }
+        int sum1 = 1;
+        int sum2 = 2;
+        int sum = 0;
+        for (int i = 3; i <= n; i++) {
+            sum = sum1 + sum2;
+            sum1 = sum2;
+            sum2 = sum;
+        }
+        return sum;
+    }
+
+
+    /**
+     * 71. Simplify Path
+     *
+     * @param path
+     * @return
+     */
+    public String simplifyPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return "/";
+        }
+        String[] words = path.split("/");
+        Deque<String> deque = new LinkedList<>();
+        for (String word : words) {
+            if (word.isEmpty() || ".".equals(word)) {
+                continue;
+            }
+            if (!"..".equals(word)) {
+                deque.offer(word);
+            } else if (!deque.isEmpty()) {
+                deque.pollLast();
+            }
+        }
+        if (deque.isEmpty()) {
+            return "/";
+        }
+        StringBuilder result = new StringBuilder();
+
+        for (String word : deque) {
+            result.append("/").append(word);
+        }
+        return result.toString();
+
+    }
+
+
+    /**
+     * 72. Edit Distance
+     *
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public int minDistance(String word1, String word2) {
+        if (word1 == null || word2 == null) {
+            return 0;
+        }
+        int m = word1.length();
+        int n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i <= m; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= n; j++) {
+            dp[0][j] = j;
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j], Math.min(dp[i][j - 1], dp[i - 1][j - 1])) + 1;
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+
+    /**
+     * 73. Set Matrix Zeroes
+     *
+     * @param matrix
+     */
+    public void setZeroes(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return;
+        }
+        boolean fr = false;
+        boolean fc = false;
     }
 
 
