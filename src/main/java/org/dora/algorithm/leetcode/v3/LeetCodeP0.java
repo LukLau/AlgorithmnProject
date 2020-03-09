@@ -2338,13 +2338,21 @@ public class LeetCodeP0 {
                 endIndex++;
             }
             boolean lastRow = endIndex == words.length;
+            int countOfWord = endIndex - startIndex;
             StringBuilder builder = new StringBuilder();
             if (lastRow) {
                 builder.append(words[startIndex]);
             } else {
+                if (countOfWord != 0) {
+                    line = line - countOfWord + 1;
+                }
+                for (int i = 0; i < countOfWord; i++) {
+                }
             }
+
             startIndex = endIndex;
         }
+
         return result;
     }
 
@@ -2472,6 +2480,192 @@ public class LeetCodeP0 {
         }
         boolean fr = false;
         boolean fc = false;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                    if (i == 0) {
+                        fr = true;
+                    }
+                    if (j == 0) {
+                        fc = true;
+                    }
+                }
+            }
+        }
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (fr) {
+            Arrays.fill(matrix[0], 0);
+        }
+        if (fc) {
+            for (int i = 0; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+
+    }
+
+
+    /**
+     * 74. Search a 2D Matrix
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix == null || matrix.length == 0) {
+            return false;
+        }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int i = row - 1;
+        int j = 0;
+        while (i >= 0 && j < column) {
+            int value = matrix[i][j];
+            if (value == target) {
+                return true;
+            } else if (value < target) {
+                j++;
+            } else {
+                i--;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 75. Sort Colors
+     *
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        int redNum = 0;
+        int blueNum = nums.length - 1;
+        for (int i = 0; i < nums.length; i++) {
+            while (nums[i] == 2 && i < blueNum) {
+                swapValue(nums, i, blueNum--);
+            }
+            while (nums[i] == 0 && redNum < i) {
+                swapValue(nums, i, redNum++);
+
+            }
+        }
+    }
+
+
+    /**
+     * 76. Minimum Window Substring
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public String minWindow(String s, String t) {
+        if (s == null || t == null) {
+            return "";
+        }
+        int[] hash = new int[256];
+        int m = s.length();
+        int count = t.length();
+        for (int i = 0; i < count; i++) {
+            hash[t.charAt(i) - '0']++;
+        }
+        int result = Integer.MAX_VALUE;
+
+        int head = 0;
+
+        int end = 0;
+        int begin = 0;
+        while (end < m) {
+            if (hash[s.charAt(end++) - '0']-- > 0) {
+                count--;
+            }
+            while (count == 0) {
+                if (end - begin < result) {
+                    head = begin;
+                    result = end - begin;
+                }
+
+                if (hash[s.charAt(begin++) - '0']++ == 0) {
+                    count++;
+                }
+            }
+        }
+        if (result != Integer.MAX_VALUE) {
+            return s.substring(head, head + result);
+        }
+        return "";
+    }
+
+
+    /**
+     * 77. Combinations
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public List<List<Integer>> combine(int n, int k) {
+        if (n <= 0 || k <= 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> result = new ArrayList<>();
+        intervalCombine(result, new ArrayList<Integer>(), 1, n, k);
+        return result;
+
+
+    }
+
+    private void intervalCombine(List<List<Integer>> result, List<Integer> integers, int start, int n, int k) {
+        if (integers.size() == k) {
+            result.add(new ArrayList<>(integers));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            integers.add(i);
+            intervalCombine(result, integers, i + 1, n, k);
+            integers.remove(integers.size() - 1);
+        }
+
+    }
+
+
+    /**
+     * 78. Subsets
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> result = new ArrayList<>();
+        intervalSubSets(result, new ArrayList<Integer>(), 0, nums);
+        return result;
+
+    }
+
+    private void intervalSubSets(List<List<Integer>> result, List<Integer> integers, int start, int[] nums) {
+        result.add(new ArrayList<>(integers));
+        for (int i = start; i < nums.length; i++) {
+            integers.add(nums[i]);
+            intervalSubSets(result, integers, i + 1, nums);
+            integers.remove(integers.size() - 1);
+        }
     }
 
 
