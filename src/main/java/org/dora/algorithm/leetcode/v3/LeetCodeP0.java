@@ -1,6 +1,7 @@
 package org.dora.algorithm.leetcode.v3;
 
 import org.dora.algorithm.datastructe.ListNode;
+import org.dora.algorithm.datastructe.TreeNode;
 
 import java.util.*;
 
@@ -12,9 +13,8 @@ public class LeetCodeP0 {
 
     public static void main(String[] args) {
         LeetCodeP0 codeV3 = new LeetCodeP0();
-        String[] words = new String[]{"What", "must", "be", "acknowledgment", "shall", "be"};
-        int maxWidth = 16;
-        codeV3.fullJustify(words, maxWidth);
+        String s = "25525511135";
+        codeV3.restoreIpAddresses(s);
     }
 
     /**
@@ -2666,6 +2666,517 @@ public class LeetCodeP0 {
             intervalSubSets(result, integers, i + 1, nums);
             integers.remove(integers.size() - 1);
         }
+    }
+
+
+    /**
+     * 79. Word Search
+     *
+     * @param board
+     * @param word
+     * @return
+     */
+    public boolean exist(char[][] board, String word) {
+        if (board == null || board.length == 0 || word == null) {
+            return false;
+        }
+        int row = board.length;
+        int column = board[0].length;
+        boolean[][] used = new boolean[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (board[i][j] == word.charAt(0) && intervalExist(used, i, j, 0, board, word)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean intervalExist(boolean[][] used, int i, int j, int start, char[][] board, String word) {
+        if (start == word.length()) {
+            return true;
+        }
+        if (i < 0 || i >= board.length || j < 0 || j >= board[i].length || used[i][j] || board[i][j] != word.charAt(start)) {
+            return false;
+        }
+        used[i][j] = true;
+        if (intervalExist(used, i - 1, j, start + 1, board, word) ||
+                intervalExist(used, i + 1, j, start + 1, board, word) ||
+                intervalExist(used, i, j - 1, start + 1, board, word) ||
+                intervalExist(used, i, j + 1, start + 1, board, word)) {
+            return true;
+        }
+        used[i][j] = false;
+        return false;
+    }
+
+
+    /**
+     * 80. Remove Duplicates from Sorted Array II
+     *
+     * @param nums
+     * @return
+     */
+    public int removeDuplicatesII(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int index = 1;
+        int count = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1]) {
+                count++;
+            } else {
+                count = 1;
+            }
+            if (count >= 3) {
+                continue;
+            }
+            nums[index++] = nums[i];
+        }
+        return index;
+    }
+
+
+    /**
+     * 81. Search in Rotated Sorted Array II
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public boolean searchII(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target) {
+                return true;
+            }
+            if (nums[left] == nums[right]) {
+                left++;
+            } else if (nums[left] <= nums[mid]) {
+                if (target < nums[mid] && nums[left] <= target) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return nums[left] == target;
+    }
+
+
+    /**
+     * 84. Largest Rectangle in Histogram
+     *
+     * @param heights
+     * @return
+     */
+    public int largestRectangleArea(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int result = 0;
+        for (int i = 0; i <= heights.length; i++) {
+            int h = i == heights.length ? 0 : heights[i];
+            if (stack.isEmpty() || heights[stack.peek()] <= h) {
+                stack.push(i);
+            } else {
+                Integer previous = stack.pop();
+
+                int size = stack.isEmpty() ? i : i - stack.peek() - 1;
+
+                result = Math.max(result, size * heights[previous]);
+
+                i--;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 85. Maximal Rectangle
+     *
+     * @param matrix
+     * @return
+     */
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int result = 0;
+        int[][] dp = new int[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (matrix[i][j] == '0') {
+                    dp[i][j] = -1;
+                    continue;
+                }
+
+                dp[i][j] = j;
+
+                if (j >= 1 && dp[i][j - 1] != -1) {
+                    dp[i][j] = dp[i][j - 1];
+                }
+                int width = j - dp[i][j] + 1;
+                for (int k = i; k >= 0 && matrix[k][j] != '0'; k--) {
+                    width = Math.min(width, j - dp[k][j] + 1);
+                    result = Math.max(result, width * (i - k + 1));
+                }
+
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * @param matrix
+     * @return
+     */
+    public int maximalRectangleII(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        int row = matrix.length;
+
+        int column = matrix[0].length;
+
+        int[] left = new int[column];
+
+        int[] right = new int[column];
+
+        int[] height = new int[column];
+        for (int j = 0; j < column; j++) {
+            right[j] = column;
+        }
+        for (char[] chars : matrix) {
+
+            int currentLeft = 0;
+
+            int currentRight = column;
+
+            for (int j = 0; j < column; j++) {
+                if (chars[j] == '0') {
+                    height[j] = 0;
+                } else {
+                    height[j]++;
+                }
+
+            }
+            for (int j = 0; j < column; j++) {
+                if (chars[j] == '1') {
+                    left[j] = Math.max(left[j], currentLeft);
+                } else {
+                    left[j] = 0;
+                    currentLeft = j + 1;
+                }
+            }
+
+            for (int j = column - 1; j >= 0; j--) {
+                if (chars[j] == '1') {
+                    right[j] = Math.min(right[j], currentRight);
+
+                } else {
+                    right[j] = column;
+                    currentRight = j;
+                }
+            }
+            for (int j = 0; j < column; j++) {
+                result = Math.max(result, height[j] * (right[j] - left[j]));
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 86. Partition List     * @param head
+     *
+     * @param x
+     * @return
+     */
+    public ListNode partition(ListNode head, int x) {
+        if (head == null) {
+            return null;
+        }
+        ListNode smallNode = new ListNode(0);
+        ListNode bigNode = new ListNode(0);
+        ListNode s1 = smallNode;
+        ListNode b1 = bigNode;
+        while (head != null) {
+            if (head.val < x) {
+                s1.next = head;
+                s1 = s1.next;
+            } else {
+                b1.next = head;
+                b1 = b1.next;
+            }
+            head = head.next;
+        }
+        b1.next = null;
+        s1.next = bigNode.next;
+        bigNode.next = null;
+        return smallNode.next;
+    }
+
+    /**
+     * 87. Scramble String
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public boolean isScramble(String s1, String s2) {
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        if (s1.equals(s2)) {
+            return true;
+        }
+        int m = s1.length();
+        int n = s2.length();
+        if (m != n) {
+            return false;
+        }
+        int[] hash = new int[256];
+
+        for (int i = 0; i < m; i++) {
+            hash[s1.charAt(i) - 'a']++;
+            hash[s2.charAt(i) - 'a']--;
+        }
+        for (int i = 0; i < hash.length; i++) {
+            if (hash[i] != 0) {
+                return false;
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            if (isScramble(s1.substring(0, i), s2.substring(0, i))
+                    && isScramble(s1.substring(i), s2.substring(i))) {
+                return true;
+            }
+            if (isScramble(s1.substring(i), s2.substring(0, m - i))
+                    && isScramble(s1.substring(0, i), s2.substring(m - i))) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    /**
+     * 88. Merge Sorted Array
+     *
+     * @param nums1
+     * @param m
+     * @param nums2
+     * @param n
+     */
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        if (nums1 == null || nums2 == null) {
+            return;
+        }
+        int k = m + n - 1;
+        m--;
+        n--;
+        int i = m;
+        int j = n;
+        while (i >= 0 && j >= 0) {
+            if (nums1[i] <= nums2[j]) {
+                nums1[k] = nums2[j--];
+            } else {
+                nums1[k] = nums1[i--];
+            }
+            k--;
+        }
+        while (j >= 0) {
+            nums1[k--] = nums2[j--];
+        }
+    }
+
+
+    /**
+     * 89. Gray Code
+     *
+     * @param n
+     * @return
+     */
+    public List<Integer> grayCode(int n) {
+        return null;
+    }
+
+
+    /**
+     * 90. Subsets II
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        Arrays.sort(nums);
+        intervalSubSetsWithDup(ans, new ArrayList<Integer>(), 0, nums);
+        return ans;
+    }
+
+    private void intervalSubSetsWithDup(List<List<Integer>> ans, List<Integer> integers, int start, int[] nums) {
+        ans.add(new ArrayList<>(integers));
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            integers.add(nums[i]);
+            intervalSubSetsWithDup(ans, integers, i + 1, nums);
+            integers.remove(integers.size() - 1);
+        }
+    }
+
+
+    /**
+     * todo
+     * 91. Decode Ways
+     *
+     * @param s
+     * @return
+     */
+    public int numDecodings(String s) {
+        return 0;
+    }
+
+
+    /**
+     * 92. Reverse Linked List II
+     *
+     * @param head
+     * @param m
+     * @param n
+     * @return
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null) {
+            return null;
+        }
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+
+        ListNode fast = dummy;
+
+        ListNode slow = dummy;
+        for (int i = 0; i < m - 1; i++) {
+            slow = slow.next;
+        }
+        for (int i = 0; i < n; i++) {
+            fast = fast.next;
+        }
+        ListNode node = slow.next;
+
+        ListNode end = fast.next;
+
+        slow.next = reverseListNode(node, end);
+
+//        node.next = end;
+
+        return dummy.next;
+    }
+
+
+    /**
+     * 93. Restore IP Addresses
+     *
+     * @param s
+     * @return
+     */
+    public List<String> restoreIpAddresses(String s) {
+        if (s == null || s.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        if (s.equals("0000")) {
+            result.add("0.0.0.0");
+            return result;
+        }
+        int len = s.length();
+
+        for (int i = 1; i < 4; i++) {
+            for (int j = 1; j < 4; j++) {
+                for (int a = 1; a < 4; a++) {
+
+                    String A = s.substring(0, i);
+
+                    String B = s.substring(i, i + j);
+
+                    String C = s.substring(i + j, i + j + a);
+
+                    String D = s.substring(i + j + a);
+                    if (checkValue(A) || checkValue(B) || checkValue(C) || checkValue(D)) {
+                        continue;
+                    }
+                    String tmp = A + "." + B + "." + C + "." + D;
+
+                    if (tmp.length() != 14) {
+                        continue;
+                    }
+
+                    result.add(tmp);
+
+                }
+            }
+        }
+        return result;
+    }
+
+    private boolean checkValue(String s) {
+        if (s.isEmpty()) {
+            return true;
+        }
+        if (s.startsWith("0") && s.length() > 1) {
+            return true;
+        }
+        return Integer.parseInt(s) > 255;
+    }
+
+
+    /**
+     * @param root
+     * @return
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+            result.add(p.val);
+            p = p.right;
+        }
+        return result;
     }
 
 
