@@ -1,6 +1,7 @@
 package org.dora.algorithm.leetcode.v3;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * @author lauluk
@@ -178,6 +179,88 @@ public class LeetCodeHard {
         }
 
 
+    }
+
+    /**
+     * 32. Longest Valid Parentheses
+     *
+     * @param s
+     * @return
+     */
+    public int longestValidParentheses(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int result = 0;
+        int left = 0;
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char word = s.charAt(i);
+            if (word == '(') {
+                stack.push(i);
+            } else {
+                if (stack.isEmpty()) {
+                    left = i;
+                } else {
+                    stack.pop();
+                }
+                if (stack.isEmpty()) {
+                    result = Math.max(result, i - left);
+                } else {
+                    result = Math.max(result, i - stack.peek());
+                }
+            }
+        }
+        return result;
+    }
+
+    public int longestValidParenthesesV2(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char word = s.charAt(i);
+            if (stack.isEmpty() || word == '(') {
+                stack.push(i);
+            } else {
+                if (s.charAt(stack.peek()) == '(') {
+                    stack.pop();
+                } else {
+                    stack.push(i);
+                }
+            }
+        }
+        if (stack.isEmpty()) {
+            return s.length();
+        }
+        int close = s.length();
+        int result = 0;
+        while (!stack.isEmpty()) {
+            int side = stack.pop();
+            result = Math.max(result, close - side - 1);
+            close = side;
+        }
+        result = Math.max(result, close);
+        return result;
+
+    }
+
+
+    /**
+     * 33. Search in Rotated Sorted Array
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+        return 0;
     }
 
 
