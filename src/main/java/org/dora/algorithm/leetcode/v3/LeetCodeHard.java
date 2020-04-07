@@ -1,6 +1,8 @@
 package org.dora.algorithm.leetcode.v3;
 
-import java.util.HashMap;
+import org.dora.algorithm.datastructe.ListNode;
+
+import java.util.*;
 
 /**
  * @author lauluk
@@ -165,20 +167,177 @@ public class LeetCodeHard {
 
 
     public boolean isMatchV2(String s, String p) {
-        if (s.isEmpty()) {
-            return p.isEmpty();
+        if (p.isEmpty()) {
+            return s.isEmpty();
         }
-        boolean firstMatch = !p.isEmpty() && (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.');
+        boolean firstMatch = !s.isEmpty() && (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.');
 
         if (s.length() >= 2 && p.charAt(1) == '*') {
-            return isMatchV2(s, p.substring(2)) ||
-                    (firstMatch && isMatchV2(s.substring(1), p));
+            return isMatchV2(s, p.substring(2)) || (firstMatch && isMatchV2(s.substring(1), p));
         } else {
             return firstMatch && isMatchV2(s.substring(1), p.substring(1));
         }
-
-
     }
 
+
+    /**
+     * 17. Letter Combinations of a Phone Number
+     *
+     * @param digits
+     * @return
+     */
+    public List<String> letterCombinations(String digits) {
+        if (digits == null || digits.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String[] map = new String[]{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        LinkedList<String> deque = new LinkedList<>();
+        deque.add("");
+        int len = digits.length();
+        for (int i = 0; i < len; i++) {
+            int index = Character.getNumericValue(digits.charAt(i));
+            String word = map[index];
+            while (deque.peek().length() == i) {
+                String poll = deque.poll();
+                for (char tmp : word.toCharArray()) {
+                    deque.add(poll + tmp);
+                }
+            }
+        }
+        return deque;
+    }
+
+    /**
+     * 23. Merge k Sorted Lists
+     *
+     * @param lists
+     * @return
+     */
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) {
+            return null;
+        }
+        PriorityQueue<ListNode> priorityQueue = new PriorityQueue<>(lists.length, Comparator.comparingInt(o -> o.val));
+
+        for (ListNode list : lists) {
+            if (list != null) {
+                priorityQueue.add(list);
+            }
+        }
+        ListNode root = new ListNode(0);
+
+        ListNode dummy = root;
+        while (!priorityQueue.isEmpty()) {
+            ListNode poll = priorityQueue.poll();
+            dummy.next = poll;
+            dummy = dummy.next;
+            if (poll.next != null) {
+                priorityQueue.add(poll.next);
+            }
+        }
+        return root.next;
+    }
+
+
+    /**
+     * 25. Reverse Nodes in k-Group
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null || k < 0) {
+            return head;
+        }
+        int count = 0;
+        ListNode currentNode = head;
+        while (currentNode != null && count != k) {
+            count++;
+            currentNode = currentNode.next;
+        }
+        if (count == k) {
+            ListNode node = reverseKGroup(currentNode, k);
+            while (count-- > 0) {
+                ListNode tmp = head.next;
+                head.next = node;
+                node = head;
+                head = tmp;
+            }
+            head = node;
+        }
+        return head;
+    }
+
+
+    public ListNode reverseKGroupV2(ListNode head, int k) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode current = head;
+        for (int i = 0; i < k; i++) {
+            if (current == null) {
+                return head;
+            }
+            current = current.next;
+        }
+        ListNode newHead = reverseListNode(head, current);
+
+        head.next = reverseKGroup(current, k);
+
+        return newHead;
+    }
+
+    private ListNode reverseListNode(ListNode start, ListNode end) {
+        ListNode prev = end;
+        while (start != end) {
+            ListNode next = start.next;
+            start.next = prev;
+            prev = start;
+            start = next;
+        }
+        return prev;
+    }
+
+    /**
+     * 29. Divide Two Integers
+     *
+     * @param dividend
+     * @param divisor
+     * @return
+     */
+    public int divide(int dividend, int divisor) {
+        if (dividend == 0) {
+            return 0;
+        }
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+        int sign = -1;
+        if (dividend > 0 && divisor > 0) {
+            sign = 1;
+        }
+        if (dividend < 0 && divisor < 0) {
+            sign = 1;
+        }
+        long dvd = Math.abs((long) dividend);
+
+        long dvs = Math.abs((long) divisor);
+
+        long result = 0;
+
+        while (dvd >= dvs) {
+            long tmp = dvs;
+
+            int multi = 1;
+            while (dvd >= (tmp << 1)) {
+                tmp <<= 1;
+                multi <<= 1;
+            }
+            dvd -= tmp;
+            result += multi;
+        }
+        return sign * (int) result;
+    }
 
 }
