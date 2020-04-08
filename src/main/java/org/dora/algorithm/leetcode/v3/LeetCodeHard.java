@@ -9,7 +9,6 @@ import java.util.Stack;
  */
 public class LeetCodeHard {
 
-
     /**
      * 5. Longest Palindromic Substring
      *
@@ -18,6 +17,15 @@ public class LeetCodeHard {
      */
     private int palindromeResult = Integer.MIN_VALUE;
     private int palindromeHead = 0;
+
+    public static void main(String[] args) {
+        int[] nums = new int[]{5, 7, 7, 8, 8, 10};
+        LeetCodeHard hard = new LeetCodeHard();
+
+        int target = 8;
+        hard.searchRange(nums, target);
+
+    }
 
     /**
      * 3. Longest Substring Without Repeating Characters
@@ -260,7 +268,67 @@ public class LeetCodeHard {
         if (nums == null || nums.length == 0) {
             return -1;
         }
-        return 0;
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[left] <= nums[mid]) {
+                if (target < nums[mid] && target >= nums[left]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 34. Find First and Last Position of Element in Sorted Array
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int[] searchRange(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+        int[] ans = new int[]{-1, -1};
+        int left = 0;
+
+        int right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                int first = mid;
+                while (first > 0 && nums[first] == nums[first - 1]) {
+                    first = first - 1;
+                }
+                int second = mid;
+                while (second < nums.length - 1 && nums[second] == nums[second + 1]) {
+                    second = second + 1;
+                }
+                ans[0] = first;
+                ans[1] = second;
+                return ans;
+            }
+        }
+        return ans;
+
     }
 
 
