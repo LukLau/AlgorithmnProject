@@ -304,10 +304,8 @@ public class LeetCodeHard {
         }
         int[] ans = new int[]{-1, -1};
         int left = 0;
-
         int right = nums.length - 1;
-
-        while (left < right) {
+        while (left <= right) {
             int mid = left + (right - left) / 2;
             if (nums[mid] < target) {
                 left = mid + 1;
@@ -328,6 +326,46 @@ public class LeetCodeHard {
             }
         }
         return ans;
+
+    }
+
+    public int[] searchRangeV2(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        int[] ans = new int[]{-1, -1};
+        if (nums[left] != target) {
+            return ans;
+        }
+        ans[0] = left;
+
+        right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2 + 1;
+            if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid;
+            }
+        }
+        ans[1] = left;
+        return ans;
+    }
+
+    public int[] searchRangeV3(int[] nums, int target) {
 
     }
 
