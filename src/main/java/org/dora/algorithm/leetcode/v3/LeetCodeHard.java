@@ -10,7 +10,6 @@ import java.util.*;
  */
 public class LeetCodeHard {
 
-
     /**
      * 5. Longest Palindromic Substring
      *
@@ -19,6 +18,15 @@ public class LeetCodeHard {
      */
     private int palindromeResult = Integer.MIN_VALUE;
     private int palindromeHead = 0;
+
+    public static void main(String[] args) {
+        int[] nums = new int[]{5, 7, 7, 8, 8, 10};
+        LeetCodeHard hard = new LeetCodeHard();
+
+        int target = 8;
+        hard.searchRange(nums, target);
+
+    }
 
     /**
      * 3. Longest Substring Without Repeating Characters
@@ -338,6 +346,186 @@ public class LeetCodeHard {
             result += multi;
         }
         return sign * (int) result;
+    }
+
+    /**
+     * 32. Longest Valid Parentheses
+     *
+     * @param s
+     * @return
+     */
+    public int longestValidParentheses(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int result = 0;
+        int left = 0;
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char word = s.charAt(i);
+            if (word == '(') {
+                stack.push(i);
+            } else {
+                if (stack.isEmpty()) {
+                    left = i;
+                } else {
+                    stack.pop();
+                }
+                if (stack.isEmpty()) {
+                    result = Math.max(result, i - left);
+                } else {
+                    result = Math.max(result, i - stack.peek());
+                }
+            }
+        }
+        return result;
+    }
+
+    public int longestValidParenthesesV2(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char word = s.charAt(i);
+            if (stack.isEmpty() || word == '(') {
+                stack.push(i);
+            } else {
+                if (s.charAt(stack.peek()) == '(') {
+                    stack.pop();
+                } else {
+                    stack.push(i);
+                }
+            }
+        }
+        if (stack.isEmpty()) {
+            return s.length();
+        }
+        int close = s.length();
+        int result = 0;
+        while (!stack.isEmpty()) {
+            int side = stack.pop();
+            result = Math.max(result, close - side - 1);
+            close = side;
+        }
+        result = Math.max(result, close);
+        return result;
+
+    }
+
+
+    /**
+     * 33. Search in Rotated Sorted Array
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[left] <= nums[mid]) {
+                if (target < nums[mid] && target >= nums[left]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 34. Find First and Last Position of Element in Sorted Array
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int[] searchRange(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+        int[] ans = new int[]{-1, -1};
+        int left = 0;
+        int right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                int first = mid;
+                while (first > 0 && nums[first] == nums[first - 1]) {
+                    first = first - 1;
+                }
+                int second = mid;
+                while (second < nums.length - 1 && nums[second] == nums[second + 1]) {
+                    second = second + 1;
+                }
+                ans[0] = first;
+                ans[1] = second;
+                return ans;
+            }
+        }
+        return ans;
+
+    }
+
+    public int[] searchRangeV2(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        int[] ans = new int[]{-1, -1};
+        if (nums[left] != target) {
+            return ans;
+        }
+        ans[0] = left;
+
+        right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2 + 1;
+            if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid;
+            }
+        }
+        ans[1] = left;
+        return ans;
+    }
+
+    public int[] searchRangeV3(int[] nums, int target) {
+
     }
 
 }
