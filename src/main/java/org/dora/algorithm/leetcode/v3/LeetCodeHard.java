@@ -525,7 +525,344 @@ public class LeetCodeHard {
     }
 
     public int[] searchRangeV3(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[]{-1, -1};
+        }
+        int firstIndex = searchFirstIndex(nums, 0, nums.length - 1, target);
+        if (firstIndex == -1) {
+            return new int[]{-1, -1};
+        }
+        int secondIndex = searchSecondIndex(nums, 0, nums.length - 1, target);
+
+        return new int[]{firstIndex, secondIndex};
+    }
+
+    private int searchSecondIndex(int[] nums, int start, int end, int target) {
+        if (start > end) {
+            return -1;
+        }
+        int mid = start + (end - start) / 2;
+        if (nums[mid] < target) {
+            return searchSecondIndex(nums, mid + 1, end, target);
+        } else if (nums[mid] > target) {
+            return searchSecondIndex(nums, start, mid - 1, target);
+        } else if (nums[mid] == target) {
+            if (mid + 1 < nums.length && nums[mid + 1] == target) {
+                return searchSecondIndex(nums, mid + 1, end, target);
+            }
+            return mid;
+        }
+        return -1;
+    }
+
+    private int searchFirstIndex(int[] nums, int start, int end, int target) {
+        if (start > end) {
+            return -1;
+        }
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+
+            if (nums[mid] < target) {
+                start = mid + 1;
+            } else if (nums[mid] > target) {
+                end = mid - 1;
+            } else if (mid - 1 >= 0 && nums[mid - 1] == target) {
+                end = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
+    }
+
+
+    /**
+     * 41. First Missing Positive
+     *
+     * @param nums
+     * @return
+     */
+    public int firstMissingPositive(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        for (int i = 0; i < nums.length; i++) {
+            while (nums[i] >= 0 && nums[i] <= nums.length && nums[i] != nums[nums[i] - 1]) {
+                swap(nums, i, nums[i] - 1);
+            }
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != i + 1) {
+                return i;
+            }
+        }
+        return nums.length + 1;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int value = nums[i];
+        nums[i] = nums[j];
+        nums[j] = value;
+    }
+
+
+    /**
+     * 42. Trapping Rain Water
+     *
+     * @param height
+     * @return
+     */
+    public int trap(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
+        }
+        int left = 0;
+        int right = height.length - 1;
+
+        int result = 0;
+
+        int minLeft = 0;
+
+        int minRight = 0;
+
+        while (left < right) {
+            if (height[left] <= height[right]) {
+                if (height[left] > minLeft) {
+                    minLeft = height[left];
+                } else {
+                    result += minLeft - height[left];
+                }
+                left++;
+            } else {
+                if (height[right] > minRight) {
+                    minRight = height[right];
+                } else {
+                    result += minRight - height[right];
+                }
+                right--;
+            }
+        }
+        return result;
+    }
+
+    public int trapV2(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
+        }
+        int left = 0;
+        int result = 0;
+        int right = height.length - 1;
+        while (left < right) {
+            while (left < right && height[left] == 0) {
+                left++;
+            }
+            while (left < right && height[right] == 0) {
+                right--;
+            }
+            int value = Math.min(height[left], height[right]);
+
+            for (int i = left; i <= right; i++) {
+                if (height[i] > value) {
+                    height[i] = height[i] - value;
+                } else {
+                    result += value - height[i];
+
+                    height[i] = 0;
+                }
+
+            }
+        }
+        return result;
+
 
     }
+
+
+    /**
+     * 43. Multiply Strings
+     *
+     * @param num1
+     * @param num2
+     * @return
+     */
+    public String multiply(String num1, String num2) {
+        if (num1 == null | num2 == null) {
+            return "0";
+        }
+        int m = num1.length();
+        int n = num2.length();
+        int[] pos = new int[m + n];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+
+                int value = Character.getNumericValue(num1.charAt(i)) * Character.getNumericValue(num2.charAt(j)) + pos[i + j + 1];
+
+                pos[i + j + 1] = value % 10;
+
+                pos[i + j] += value / 10;
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int num : pos) {
+            if (!(num == 0 && builder.length() == 0)) {
+                builder.append(num);
+            }
+        }
+        return builder.length() == 0 ? "0" : builder.toString();
+    }
+
+    /**
+     * 44. Wildcard Matching
+     *
+     * @param s
+     * @param p
+     * @return
+     */
+    public boolean isMatchV3(String s, String p) {
+        if (s == null || s.isEmpty()) {
+            return true;
+        }
+        if (p == null) {
+            return false;
+        }
+        int m = s.length();
+        int n = p.length();
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        dp[0][0] = true;
+
+        for (int j = 1; j <= n; j++) {
+            dp[0][j] = p.charAt(j - 1) == '*' && dp[0][j - 1];
+        }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p.charAt(j - 1) == s.charAt(i - 1) || p.charAt(j - 1) == '?') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p.charAt(j - 1) == '*') {
+                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    /**
+     * 45. Jump Game II
+     *
+     * @param nums
+     * @return
+     */
+    public int jumpV2(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int step = 0;
+        int furthest = 0;
+        int current = 0;
+        for (int i = 0; i < nums.length - 1; i++) {
+            furthest = Math.max(i + nums[i], furthest);
+            if (i == current) {
+                step++;
+                current = furthest;
+            }
+        }
+        return step;
+
+    }
+
+    /**
+     * 50. Pow(x, n)
+     *
+     * @param x
+     * @param n
+     * @return
+     */
+    public double myPow(double x, int n) {
+        if (n == 0) {
+            return 1;
+        }
+        if (n == 1) {
+            return x;
+        }
+        if (n < 0) {
+            x = 1 / x;
+            n = -n;
+        }
+        if (x > Integer.MAX_VALUE || x < Integer.MIN_VALUE) {
+            return 0;
+        }
+        return n % 2 == 0 ? myPow(x * x, n / 2) : x * myPow(x * x, n / 2);
+    }
+
+    public double myPowV2(double x, int n) {
+        double result = 1.0;
+        long pos = Math.abs((long) n);
+        while (pos != 0) {
+            if (pos % 2 != 0) {
+                result *= x;
+            }
+            x *= x;
+            pos >>= 1;
+        }
+        if (result > Integer.MAX_VALUE) {
+            return 0;
+        }
+        return n < 0 ? 1 / result : result;
+    }
+
+
+    /**
+     * 51. N-Queens
+     *
+     * @param n
+     * @return
+     */
+    public List<List<String>> solveNQueens(int n) {
+        if (n <= 0) {
+            return new ArrayList<>();
+        }
+        char[][] matrix = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = '.';
+            }
+        }
+        List<List<String>> result = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                intervalNQueens(result, matrix, i, j);
+
+            }
+        }
+        return result;
+
+    }
+
+    private void intervalNQueens(List<List<String>> result,
+                                 char[][] matrix,
+                                 int row, int col) {
+        if (row == matrix.length) {
+            List<String> tmp = new ArrayList<>();
+            for (char[] chars : matrix) {
+                tmp.add(String.valueOf(chars));
+            }
+            result.add(tmp);
+            return;
+        }
+        for (int j = 0; j < matrix[0].length; j++) {
+            matrix[row][j] = 'Q';
+            checkQueens(matrix, row, j);
+            matrix[row][j] = '.';
+        }
+    }
+
+    private void checkQueens(char[][] matrix, int i, int j) {
+        for (int k = i; k >= 0; k--) {
+            if (matrix[k][j] == 'Q') {
+                return;
+            }
+        }
+
+    }
+
 
 }
