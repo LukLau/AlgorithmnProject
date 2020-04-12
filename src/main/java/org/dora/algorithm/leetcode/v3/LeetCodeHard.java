@@ -827,19 +827,13 @@ public class LeetCodeHard {
             }
         }
         List<List<String>> result = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                intervalNQueens(result, matrix, i, j);
-
-            }
-        }
+        intervalNQueens(result, matrix, 0);
         return result;
-
     }
 
     private void intervalNQueens(List<List<String>> result,
                                  char[][] matrix,
-                                 int row, int col) {
+                                 int row) {
         if (row == matrix.length) {
             List<String> tmp = new ArrayList<>();
             for (char[] chars : matrix) {
@@ -849,18 +843,120 @@ public class LeetCodeHard {
             return;
         }
         for (int j = 0; j < matrix[0].length; j++) {
-            matrix[row][j] = 'Q';
-            checkQueens(matrix, row, j);
-            matrix[row][j] = '.';
+            if (checkQueens(matrix, row, j)) {
+                matrix[row][j] = 'Q';
+                intervalNQueens(result, matrix, row + 1);
+                matrix[row][j] = '.';
+            }
         }
     }
 
-    private void checkQueens(char[][] matrix, int i, int j) {
-        for (int k = i; k >= 0; k--) {
-            if (matrix[k][j] == 'Q') {
-                return;
+    private boolean checkQueens(char[][] matrix, int row, int column) {
+        for (int k = row - 1; k >= 0; k--) {
+            if (matrix[k][column] == 'Q') {
+                return false;
             }
         }
+        for (int i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
+            if (matrix[i][j] == 'Q') {
+                return false;
+            }
+        }
+        for (int i = row - 1, j = column + 1; i >= 0 && j < matrix[0].length; i--, j++) {
+            if (matrix[i][j] == 'Q') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 52. N-Queens II
+     *
+     * @param n
+     * @return
+     */
+    public int totalNQueens(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+        int[] dp = new int[n];
+        return intervalTotalNQueens(dp, 0, n);
+    }
+
+    private int intervalTotalNQueens(int[] dp, int row, int n) {
+        int count = 0;
+        if (row == n) {
+            count++;
+            return count;
+        }
+        for (int j = 0; j < dp.length; j++) {
+            if (checkNQueens(dp, row, j)) {
+                dp[row] = j;
+                count += intervalTotalNQueens(dp, row + 1, n);
+                dp[row] = -1;
+            }
+        }
+        return count;
+    }
+
+    private boolean checkNQueens(int[] dp, int row, int column) {
+        for (int i = row - 1; i >= 0; i--) {
+            if (dp[i] == column || Math.abs(i - row) == Math.abs(dp[i] - column)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * 53. Maximum Subarray
+     *
+     * @param nums
+     * @return
+     */
+    public int maxSubArray(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int local = 0;
+        int result = Integer.MIN_VALUE;
+        for (int num : nums) {
+            local = local < 0 ? num : local + num;
+
+            result = Math.max(result, local);
+        }
+        return result;
+    }
+
+
+    /**
+     * 56. Merge Intervals
+     *
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return new int[][]{};
+        }
+        PriorityQueue<int[]> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
+        for (int[] interval : intervals) {
+            priorityQueue.offer(interval);
+        }
+        LinkedList<int[]> result = new LinkedList<>();
+        while (!priorityQueue.isEmpty()) {
+            int[] lastIndex = result.peekLast();
+
+            int[] poll = priorityQueue.poll();
+            if (lastIndex == null || lastIndex[1] < poll[0]) {
+                result.addLast(poll);
+            } else {
+                lastIndex[1] = Math.max(lastIndex[1], poll[1]);
+            }
+        }
+        return result.toArray(new int[result.size()][]);
 
     }
 
