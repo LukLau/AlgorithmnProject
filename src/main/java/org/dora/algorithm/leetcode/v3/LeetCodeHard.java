@@ -961,4 +961,127 @@ public class LeetCodeHard {
     }
 
 
+    /**
+     * 57. Insert Interval
+     *
+     * @param intervals
+     * @param newInterval
+     * @return
+     */
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        if (intervals == null || newInterval == null) {
+            return new int[][]{};
+        }
+        PriorityQueue<int[]> queue = new PriorityQueue<>(Comparator.comparingInt(o -> o[0]));
+        for (int[] interval : intervals) {
+            queue.offer(interval);
+        }
+        LinkedList<int[]> list = new LinkedList<>();
+        while (!queue.isEmpty()) {
+            int[] peek = queue.peek();
+            if (peek[1] < newInterval[0]) {
+                int[] poll = queue.poll();
+                list.addLast(poll);
+            } else {
+                break;
+            }
+        }
+        while (!queue.isEmpty()) {
+            int[] peek = queue.peek();
+            if (peek[0] <= newInterval[1]) {
+                int[] poll = queue.poll();
+                newInterval[0] = Math.min(newInterval[0], poll[0]);
+                newInterval[1] = Math.max(newInterval[1], poll[1]);
+            } else {
+                break;
+            }
+        }
+        list.add(newInterval);
+
+        while (!queue.isEmpty()) {
+            list.add(queue.poll());
+        }
+        return list.toArray(new int[list.size()][]);
+    }
+
+
+    /**
+     * 59. Spiral Matrix II
+     *
+     * @param n
+     * @return
+     */
+    public int[][] generateMatrix(int n) {
+        if (n <= 0) {
+            return new int[][]{};
+        }
+        int[][] matrix = new int[n][n];
+        int total = 0;
+        int left = 0;
+        int right = n - 1;
+        int top = 0;
+        int bottom = n - 1;
+        while (left <= right && top <= bottom) {
+            for (int i = left; i <= right; i++) {
+                matrix[top][i] = ++total;
+            }
+            for (int i = top + 1; i <= bottom; i++) {
+                matrix[i][right] = ++total;
+            }
+
+            if (top != bottom) {
+                for (int i = right - 1; i >= left; i--) {
+                    matrix[bottom][i] = ++total;
+                }
+            }
+
+
+            if (left != right) {
+                for (int i = bottom - 1; i > top; i--) {
+                    matrix[i][left] = ++total;
+                }
+            }
+            left++;
+            right--;
+            top++;
+            bottom--;
+
+        }
+        return matrix;
+    }
+
+    /**
+     * todo
+     * 60. Permutation Sequence
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public String getPermutation(int n, int k) {
+        if (n <= 0 || k <= 0) {
+            return "";
+        }
+        List<Integer> nums = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            nums.add(i);
+        }
+        int[] factory = new int[n + 1];
+        factory[0] = factory[1] = 1;
+        int base = 1;
+        for (int i = 2; i <= n; i++) {
+            factory[i] = base;
+            base *= i;
+        }
+        k--;
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            int index = k / factory[n - 1 - i];
+            builder.append(nums.remove(index));
+            k -= index * factory[n - 1 - i];
+        }
+        return builder.toString();
+    }
+
+
 }
