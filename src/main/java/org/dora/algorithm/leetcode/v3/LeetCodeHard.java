@@ -20,11 +20,10 @@ public class LeetCodeHard {
     private int palindromeHead = 0;
 
     public static void main(String[] args) {
-        int[] nums = new int[]{5, 7, 7, 8, 8, 10};
         LeetCodeHard hard = new LeetCodeHard();
 
-        int target = 8;
-        hard.searchRange(nums, target);
+        String s = "6e-1";
+        hard.isNumber(s);
 
     }
 
@@ -1083,5 +1082,199 @@ public class LeetCodeHard {
         return builder.toString();
     }
 
+
+    /**
+     * 61. Rotate List
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        ListNode current = head;
+        int count = 1;
+        while (current.next != null) {
+            count++;
+            current = current.next;
+        }
+        k %= count;
+        if (k != 0) {
+            current.next = head;
+            for (int i = 0; i < count - k; i++) {
+                head = head.next;
+                current = current.next;
+            }
+            current.next = null;
+
+        }
+        return head;
+    }
+
+    /**
+     * 62. Unique Paths
+     *
+     * @param m
+     * @param n
+     * @return
+     */
+    public int uniquePaths(int m, int n) {
+        if (m < 0 || n < 0) {
+            return 0;
+        }
+        int[] dp = new int[n];
+        for (int j = 0; j < n; j++) {
+            dp[j] = 1;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[j] = j == 0 ? dp[j] : dp[j - 1] + dp[j];
+            }
+        }
+        return dp[n - 1];
+    }
+
+    /**
+     * 63. Unique Paths II
+     *
+     * @param obstacleGrid
+     * @return
+     */
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if (obstacleGrid == null || obstacleGrid.length == 0) {
+            return 0;
+        }
+        int column = obstacleGrid[0].length;
+        int row = obstacleGrid.length;
+        int[] dp = new int[column];
+
+        dp[0] = 1;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    dp[j] = 0;
+                } else {
+                    dp[j] = j == 0 ? dp[j] : dp[j - 1] + dp[j];
+                }
+            }
+        }
+        return dp[column - 1];
+    }
+
+
+    /**
+     * 64. Minimum Path Sum
+     *
+     * @param grid
+     * @return
+     */
+    public int minPathSum(int[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        int row = grid.length;
+        int column = grid[0].length;
+        int[][] dp = new int[row][column];
+        for (int j = 0; j < column; j++) {
+            dp[0][j] = j == 0 ? grid[0][0] : dp[0][j - 1] + grid[0][j];
+        }
+        for (int i = 1; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (j == 0) {
+                    dp[i][j] = dp[i - 1][j] + grid[i][j];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+                }
+            }
+        }
+        return dp[row - 1][column - 1];
+    }
+
+    public int minPathSumV2(int[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        int column = grid[0].length;
+        int row = grid.length;
+        int[] dp = new int[column];
+        for (int j = 0; j < column; j++) {
+            dp[j] = j == 0 ? grid[0][0] : dp[j - 1] + grid[0][j];
+        }
+        for (int i = 1; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (j == 0) {
+                    dp[j] = dp[j] + grid[i][j];
+                } else {
+                    dp[j] = Math.min(dp[j], dp[j - 1]) + grid[i][j];
+                }
+            }
+        }
+        return dp[column - 1];
+    }
+
+
+    /**
+     * 65. Valid Number
+     *
+     * @param s
+     * @return
+     */
+    public boolean isNumber(String s) {
+        if (s == null) {
+            return false;
+        }
+        s = s.trim();
+        if (s.isEmpty()) {
+            return false;
+        }
+        boolean seenE = false;
+        boolean seenNumberAfterE = true;
+        boolean seenNumber = false;
+        boolean seenDit = false;
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char word = s.charAt(i);
+            if (word >= '0' && word <= '9') {
+                seenNumber = true;
+                seenNumberAfterE = true;
+            } else if (word == 'e' || word == 'E') {
+                if (i == 0 || (!Character.isDigit(s.charAt(i - 1)) && s.charAt(i - 1) != '.')) {
+                    return false;
+                }
+                if (!seenNumber || seenE) {
+                    return false;
+                }
+                seenE = true;
+                seenNumberAfterE = false;
+            } else if (word == '-' || word == '+') {
+                if (i != 0 && (s.charAt(i - 1) != 'e' && s.charAt(i - 1) != 'E')) {
+                    return false;
+                }
+            } else if (word == '.') {
+                if (seenDit || seenE) {
+                    return false;
+                }
+                seenDit = true;
+            } else {
+                return false;
+            }
+        }
+        return seenNumber && seenNumberAfterE;
+
+    }
+
+
+    /**
+     * 67. Add Binary
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public String addBinary(String a, String b) {
+        return "";
+    }
 
 }

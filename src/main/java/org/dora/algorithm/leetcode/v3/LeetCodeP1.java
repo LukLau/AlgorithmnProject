@@ -16,6 +16,6 @@ public class LeetCodeP1 {
      * @return
      */
     public boolean isSymmetric(TreeNode root) {
-
+        return false;
     }
 }
