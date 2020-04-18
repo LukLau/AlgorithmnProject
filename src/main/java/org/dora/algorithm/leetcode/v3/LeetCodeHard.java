@@ -1274,7 +1274,180 @@ public class LeetCodeHard {
      * @return
      */
     public String addBinary(String a, String b) {
-        return "";
+        int carry = 0;
+        int m = a.length() - 1;
+        int n = b.length() - 1;
+        StringBuilder builder = new StringBuilder();
+        while (m >= 0 || n >= 0 || carry > 0) {
+            int value = (m >= 0 ? Character.getNumericValue(a.charAt(m--)) : 0) + (n >= 0 ? Character.getNumericValue(b.charAt(n--)) : 0) + carry;
+            carry = value / 2;
+            builder.append(value % 2);
+        }
+        StringBuilder reverse = builder.reverse();
+        String result = reverse.toString();
+        if (result.isEmpty() || result.startsWith("0")) {
+            return "0";
+        }
+        return result;
+    }
+
+
+    /**
+     * 68. Text Justification
+     *
+     * @param words
+     * @param maxWidth
+     * @return
+     */
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        if (words == null || words.length == 0 || maxWidth <= 0) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        int startIndex = 0;
+        int len = words.length;
+        while (startIndex < len) {
+            int endIndex = startIndex;
+            int line = 0;
+            while (endIndex < len && line + words[endIndex].length() <= maxWidth) {
+                line += words[endIndex].length() + 1;
+                endIndex++;
+            }
+            StringBuilder builder = new StringBuilder();
+            boolean lastRow = endIndex == len;
+            int currentLen = maxWidth - line + 1;
+            int countOfWord = endIndex - startIndex;
+            if (countOfWord == 1) {
+                builder.append(words[startIndex]);
+            } else {
+                int blankOfWord = lastRow ? 1 : currentLen / (countOfWord - 1) + 1;
+                int extraOfWord = lastRow ? 0 : currentLen % (countOfWord - 1);
+                String construct = construct(startIndex, endIndex, blankOfWord, extraOfWord, words);
+                builder.append(construct);
+            }
+
+            String word = trimWord(builder.toString(), maxWidth);
+
+            result.add(word);
+
+            startIndex = endIndex;
+        }
+        return result;
+
+    }
+
+    private String construct(int startIndex, int endIndex, int blankOfWord, int extraOfWord, String[] words) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = startIndex; i < endIndex; i++) {
+
+            builder.append(words[i]);
+            int tmp = blankOfWord;
+
+            while (tmp-- > 0) {
+                builder.append(" ");
+            }
+            if (extraOfWord-- > 0) {
+                builder.append(" ");
+            }
+        }
+        return builder.toString();
+    }
+
+    private String trimWord(String word, int maxWidth) {
+        while (word.length() < maxWidth) {
+            word = word + " ";
+        }
+        while (word.length() > maxWidth) {
+            word = word.substring(0, word.length() - 1);
+        }
+        return word;
+    }
+
+
+    /**
+     * todo
+     *
+     * @param words
+     * @param maxWidth
+     * @return
+     */
+    public List<String> fullJustifyV2(String[] words, int maxWidth) {
+        if (words == null || words.length == 0) {
+            return new ArrayList<>();
+        }
+        List<String> result = new ArrayList<>();
+        for (int i = 0, k; i < words.length; i = i + k) {
+            int line = 0;
+            for (k = 0; i + k < words.length && line + words[i + k].length() <= maxWidth - k; k++) {
+                line += words[i + k].length();
+            }
+            StringBuilder builder = new StringBuilder();
+
+            boolean lastRow = i + k == words.length;
+
+            for (int j = 0; j < k; j++) {
+                builder.append(words[i + j]);
+                if (lastRow) {
+                    builder.append(" ");
+                } else {
+                    int countOfBlank = 0;
+                    if (k - 1 > 0) {
+                        countOfBlank = (maxWidth - line) / (k - 1) + (j < (maxWidth - line) % (k - 1) ? 1 : 0);
+                    }
+                    while (countOfBlank-- > 0) {
+                        builder.append(" ");
+                    }
+                }
+            }
+            result.add(trimWord(builder.toString(), maxWidth));
+        }
+        return result;
+
+    }
+
+    /**
+     * 平方根求解
+     *
+     * @param x
+     * @return
+     */
+    public int mySqrt(int x) {
+        double precision = 0.00001;
+        double result = x;
+        while (result * result - x > precision) {
+            result = (result + x / result) / 2;
+        }
+        return (int) result;
+    }
+
+
+    /**
+     * @param path
+     * @return
+     */
+    public String simplifyPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return "/";
+        }
+        Deque<String> deque = new LinkedList<>();
+        Set<String> skip = new HashSet<>(Arrays.asList("", "..", "."));
+        String[] words = path.split("/");
+        for (String word : words) {
+            if (!skip.contains(word)) {
+                deque.offer(word);
+            } else if (!deque.isEmpty() && "..".equals(word)) {
+                deque.pollLast();
+            }
+        }
+        if (deque.isEmpty()) {
+            return "/";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String word : deque) {
+            builder.append("/").append(word);
+        }
+        return builder.toString();
+
     }
 
 }
