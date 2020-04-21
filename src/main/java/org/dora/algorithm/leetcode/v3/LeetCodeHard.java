@@ -21,9 +21,8 @@ public class LeetCodeHard {
 
     public static void main(String[] args) {
         LeetCodeHard hard = new LeetCodeHard();
-
-        String s = "6e-1";
-        hard.isNumber(s);
+        int[] nums = new int[]{1, 3};
+        hard.searchV2(nums, 2);
 
     }
 
@@ -1449,5 +1448,381 @@ public class LeetCodeHard {
         return builder.toString();
 
     }
+
+
+    /**
+     * 72. Edit Distance
+     *
+     * @param word1
+     * @param word2
+     * @return
+     */
+    public int minDistance(String word1, String word2) {
+        if (word1 == null || word2 == null) {
+            return 0;
+        }
+        int m = word1.length();
+        int n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[i].length; j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                } else if (j == 0) {
+                    dp[i][j] = i;
+                } else if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;
+                }
+
+            }
+        }
+        return dp[m][n];
+    }
+
+    public int minDistanceV2(String word1, String word2) {
+        if (word2 == null || word1 == null) {
+            return 0;
+        }
+        int row = word1.length();
+        int column = word2.length();
+        int[] pre = new int[column + 1];
+
+        for (int j = 1; j <= column; j++) {
+            pre[j] = j;
+        }
+        int[] cur = new int[column + 1];
+        for (int i = 1; i <= row; i++) {
+            cur[0] = i;
+            for (int j = 1; j <= column; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    cur[j] = pre[j - 1];
+                } else {
+                    cur[j] = Math.min(Math.min(pre[j - 1], pre[j]), cur[j - 1]) + 1;
+                }
+            }
+            for (int k = 0; k < cur.length; k++) {
+                pre[k] = cur[k];
+            }
+        }
+        return pre[column];
+    }
+
+    /**
+     * 75. Sort Colors
+     *
+     * @param nums
+     */
+    public void sortColors(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        int blue = nums.length - 1;
+        int red = 0;
+        for (int i = 0; i < nums.length; i++) {
+            while (nums[i] == 2 && i < blue) {
+                swap(nums, i, blue--);
+
+            }
+            while (nums[i] == 0 && i > red) {
+                swap(nums, i, red++);
+            }
+        }
+    }
+
+
+    public String minWindow(String s, String t) {
+        if (s == null || t == null) {
+            return "";
+        }
+        int count = t.length();
+        int[] hash = new int[256];
+        for (int i = 0; i < count; i++) {
+            hash[t.charAt(i) - '0']++;
+        }
+        int result = Integer.MAX_VALUE;
+        int begin = 0;
+        int end = 0;
+        int head = 0;
+        int len = s.length();
+        while (end < len) {
+            if (hash[s.charAt(end++) - '0']-- > 0) {
+                count--;
+            }
+            while (count == 0) {
+                if (end - begin < result) {
+                    head = begin;
+                    result = end - begin;
+                }
+                if (hash[s.charAt(begin++) - '0']++ == 0) {
+                    count++;
+                }
+            }
+        }
+        if (result != Integer.MAX_VALUE) {
+            return s.substring(head, head + result);
+        }
+        return s;
+    }
+
+
+    /**
+     * 77. Combinations
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public List<List<Integer>> combine(int n, int k) {
+        if (n <= 0 || k <= 0) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> result = new ArrayList<>();
+        intervalCombine(result, new ArrayList<Integer>(), 1, n, k);
+        return result;
+
+    }
+
+    private void intervalCombine(List<List<Integer>> result, List<Integer> integers, int start, int n, int k) {
+        if (integers.size() == k) {
+            result.add(new ArrayList<>(integers));
+            return;
+        }
+        for (int i = start; i <= n; i++) {
+            integers.add(i);
+            intervalCombine(result, integers, i + 1, n, k);
+            integers.remove(integers.size() - 1);
+        }
+
+    }
+
+
+    /**
+     * 79. Word Search
+     *
+     * @param board
+     * @param word
+     * @return
+     */
+    public boolean exist(char[][] board, String word) {
+        if (board == null || board.length == 0) {
+            return false;
+        }
+        int row = board.length;
+        int column = board[0].length;
+        boolean[][] used = new boolean[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                if (board[i][j] == word.charAt(0) && intervalExist(used, i, j, board, 0, word)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean intervalExist(boolean[][] used, int i, int j, char[][] board, int index, String word) {
+        if (index == word.length()) {
+            return true;
+        }
+        if (i < 0 || i >= board.length || j < 0 || j >= board[i].length || used[i][j] || board[i][j] != word.charAt(index)) {
+            return false;
+        }
+        used[i][j] = true;
+        if (intervalExist(used, i - 1, j, board, index + 1, word) ||
+                intervalExist(used, i + 1, j, board, index + 1, word) ||
+                intervalExist(used, i, j - 1, board, index + 1, word) ||
+                intervalExist(used, i, j + 1, board, index + 1, word)) {
+            return true;
+        }
+        used[i][j] = false;
+        return false;
+    }
+
+    /**
+     * 80. Remove Duplicates from Sorted Array II
+     *
+     * @param nums
+     * @return
+     */
+    public int removeDuplicates(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int index = 1;
+        int count = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1]) {
+                if (count == 2) {
+                    continue;
+                } else {
+                    count++;
+                }
+            } else {
+                count = 1;
+            }
+            nums[index++] = nums[i];
+        }
+        return index;
+    }
+
+
+    /**
+     * todo
+     * 81. Search in Rotated Sorted Array II
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public boolean searchV2(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == target) {
+                return true;
+            }
+            if (nums[left] == nums[right]) {
+                left++;
+            } else if (nums[left] <= nums[mid]) {
+                if (target < nums[mid] && target >= nums[left]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        return nums[left] == target;
+    }
+
+
+    /**
+     * 82. Remove Duplicates from Sorted List II
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        if (head.val == head.next.val) {
+            ListNode current = head.next.next;
+            while (current != null && current.val == head.val) {
+                current = current.next;
+            }
+            return deleteDuplicates(current);
+        } else {
+            head.next = deleteDuplicates(head.next);
+            return head;
+        }
+    }
+
+
+    /**
+     * 84. Largest Rectangle in Histogram
+     *
+     * @param heights
+     * @return
+     */
+    public int largestRectangleArea(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+        Stack<Integer> stack = new Stack<>();
+
+        int result = 0;
+
+        for (int i = 0; i <= heights.length; i++) {
+            int h = i == heights.length ? 0 : heights[i];
+            if (stack.isEmpty() || heights[stack.peek()] <= h) {
+                stack.push(i);
+            } else {
+                Integer pop = stack.pop();
+                int value = heights[pop];
+                int side = stack.isEmpty() ? i : i - stack.peek() - 1;
+                result = Math.max(result, side * value);
+                i--;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 85. Maximal Rectangle
+     *
+     * @param matrix
+     * @return
+     */
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int column = matrix[0].length;
+        int[] left = new int[column];
+        int[] right = new int[column];
+        Arrays.fill(right, column);
+        int[] height = new int[column];
+        int result = 0;
+        for (char[] chars : matrix) {
+            int leftSide = 0;
+            int rightSide = column;
+            for (int j = 0; j < column; j++) {
+                char word = chars[j];
+                if (word == '1') {
+                    height[j]++;
+                } else {
+                    height[j] = 0;
+                }
+
+                if (word == '1') {
+                    left[j] = Math.max(left[j], leftSide);
+                } else {
+                    left[j] = 0;
+                    leftSide = j + 1;
+                }
+            }
+            for (int j = column - 1; j >= 0; j--) {
+                char word = chars[j];
+
+                if (word == '1') {
+                    right[j] = Math.min(right[j], rightSide);
+                } else {
+                    right[j] = column;
+                    rightSide = j;
+                }
+            }
+
+            for (int j = 0; j < column; j++) {
+                result = Math.max(result, height[j] * (right[j] - left[j]));
+            }
+        }
+        return result;
+    }
+
+
+    public int maximalSquare(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int row = matrix.length;
+        int column = matrix[0].length;
+        int result = 0;
+
+    }
+
 
 }
