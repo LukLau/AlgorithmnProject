@@ -1821,6 +1821,168 @@ public class LeetCodeHard {
         int row = matrix.length;
         int column = matrix[0].length;
         int result = 0;
+        int[][] dp = new int[row][column];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                char word = matrix[i][j];
+                if (word == '1') {
+                    if (i == 0 || j == 0) {
+                        dp[i][j] = 1;
+                    } else {
+                        dp[i][j] = Math.min(dp[i - 1][j], Math.min(dp[i][j - 1], dp[i - 1][j - 1])) + 1;
+                    }
+                    result = Math.max(result, dp[i][j] * dp[i][j]);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 86. Partition List
+     *
+     * @param head
+     * @param x
+     * @return
+     */
+    public ListNode partition(ListNode head, int x) {
+        if (head == null) {
+            return null;
+        }
+        ListNode dummy1 = new ListNode(0);
+        ListNode dummy2 = new ListNode(0);
+        ListNode small = dummy1;
+        ListNode big = dummy2;
+        while (head != null) {
+            if (head.val < x) {
+                small.next = head;
+                small = small.next;
+            } else {
+                big.next = head;
+                big = big.next;
+            }
+            head = head.next;
+        }
+        big.next = null;
+        small.next = dummy2.next;
+        dummy2.next = null;
+        return dummy1.next;
+
+    }
+
+    /**
+     * 87. Scramble String
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
+    public boolean isScramble(String s1, String s2) {
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        if (s1.equals(s2)) {
+            return true;
+        }
+        int m = s1.length();
+        int n = s2.length();
+        int[] hash = new int[256];
+        for (int i = 0; i < m; i++) {
+            hash[s1.charAt(i) - '0']++;
+            hash[s2.charAt(i) - 0]--;
+        }
+        return false;
+
+    }
+
+
+    /**
+     * todo
+     *
+     * @param n
+     * @return
+     */
+    public List<Integer> grayCode(int n) {
+        return null;
+    }
+
+
+    /**
+     * 90. Subsets II
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        intervalSubsetsWithDup(result, new ArrayList<Integer>(), nums, 0);
+        return result;
+    }
+
+    private void intervalSubsetsWithDup(List<List<Integer>> result, List<Integer> integers, int[] nums, int start) {
+        result.add(new ArrayList<>(integers));
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            integers.add(nums[i]);
+            intervalSubsetsWithDup(result, integers, nums, i + 1);
+            integers.remove(integers.size() - 1);
+        }
+    }
+
+
+    /**
+     * todo
+     * 91. Decode Ways
+     *
+     * @param s
+     * @return
+     */
+    public int numDecodings(String s) {
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        StringBuilder builder = new StringBuilder();
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            int value = Character.getNumericValue(s.charAt(i));
+
+            int remain = value % 25;
+        }
+        return 0;
+    }
+
+
+    /**
+     * 92. Reverse Linked List II
+     *
+     * @param head
+     * @param m
+     * @param n
+     * @return
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head == null) {
+            return null;
+        }
+        ListNode root = new ListNode(0);
+        ListNode fast = root;
+        ListNode slow = root;
+        for (int i = 0; i < n; i++) {
+            if (fast == null) {
+                return null;
+            }
+            fast = fast.next;
+        }
+        for (int i = 0; i < m - 1; i++) {
+            slow = slow.next;
+        }
 
     }
 
