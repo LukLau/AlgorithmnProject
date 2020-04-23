@@ -1,6 +1,7 @@
 package org.dora.algorithm.leetcode.v3;
 
 import org.dora.algorithm.datastructe.ListNode;
+import org.dora.algorithm.datastructe.TreeNode;
 
 import java.util.*;
 
@@ -1972,6 +1973,7 @@ public class LeetCodeHard {
             return null;
         }
         ListNode root = new ListNode(0);
+        root.next = head;
         ListNode fast = root;
         ListNode slow = root;
         for (int i = 0; i < n; i++) {
@@ -1983,7 +1985,70 @@ public class LeetCodeHard {
         for (int i = 0; i < m - 1; i++) {
             slow = slow.next;
         }
+        ListNode start = slow.next;
+        ListNode end = fast.next;
+        slow.next = reverser(start, fast);
+        start.next = end;
 
+        return root.next;
+    }
+
+    private ListNode reverser(ListNode start, ListNode end) {
+        ListNode prev = null;
+        while (prev != end) {
+            ListNode tmp = start.next;
+            start.next = prev;
+            prev = start;
+            start = tmp;
+        }
+        return prev;
+    }
+
+
+    /**
+     * 94. Binary Tree Inorder Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<Integer> result = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        while (p != null || !stack.isEmpty()) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+            result.add(p.val);
+            p = p.right;
+        }
+        return result;
+    }
+
+    /**
+     * 95. Unique Binary Search Trees II
+     *
+     * @param n
+     * @return
+     */
+    public List<TreeNode> generateTrees(int n) {
+        if (n <= 0) {
+            return new ArrayList<>();
+        }
+        return intervalGenerateTrees(1, n);
+    }
+
+    private List<TreeNode> intervalGenerateTrees(int start, int end) {
+        List<TreeNode> result = new ArrayList<>();
+        if (start > end) {
+
+        }
+        return null;
     }
 
 
