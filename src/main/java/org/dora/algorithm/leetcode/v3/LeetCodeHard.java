@@ -25,6 +25,12 @@ public class LeetCodeHard {
         int[] nums = new int[]{1, 3};
         hard.searchV2(nums, 2);
 
+        String s1 = "a";
+        String s2 = "bbc";
+        String interval = "abbc";
+
+        hard.isInterleave(s1, s2, interval);
+
     }
 
     /**
@@ -2046,9 +2052,160 @@ public class LeetCodeHard {
     private List<TreeNode> intervalGenerateTrees(int start, int end) {
         List<TreeNode> result = new ArrayList<>();
         if (start > end) {
-
+            result.add(null);
+            return result;
         }
-        return null;
+        if (start == end) {
+            TreeNode node = new TreeNode(start);
+            result.add(node);
+            return result;
+        }
+        for (int i = start; i <= end; i++) {
+            List<TreeNode> leftNodes = intervalGenerateTrees(start, i - 1);
+            List<TreeNode> rightNodes = intervalGenerateTrees(i + 1, end);
+            for (TreeNode leftNode : leftNodes) {
+                for (TreeNode rightNode : rightNodes) {
+                    TreeNode root = new TreeNode(i);
+
+                    root.left = leftNode;
+                    root.right = rightNode;
+                    result.add(root);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 96. Unique Binary Search Trees
+     *
+     * @param n
+     * @return
+     */
+    public int numTrees(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        int[] dp = new int[n + 1];
+
+        dp[0] = dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i < dp.length; i++) {
+            for (int j = 1; j <= i; j++) {
+                dp[i] += dp[j - 1] * dp[i - j];
+            }
+        }
+        return dp[n];
+    }
+
+    /**
+     * 97. Interleaving String
+     *
+     * @param s1
+     * @param s2
+     * @param s3
+     * @return
+     */
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s1 == null || s2 == null || s3 == null) {
+            return false;
+        }
+        int m = s1.length();
+
+        int n = s2.length();
+
+        if (m + n != s3.length()) {
+            return false;
+        }
+        boolean[][] dp = new boolean[m + 1][n + 1];
+
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i == 0 && j == 0) {
+                    dp[0][0] = true;
+                } else if (i == 0) {
+                    dp[0][j] = dp[0][j - 1] && s2.charAt(j - 1) == s3.charAt(i + j - 1);
+                } else if (j == 0) {
+                    dp[i][0] = dp[i - 1][j] && s1.charAt(i - 1) == s3.charAt(i + j - 1);
+                } else {
+                    dp[i][j] = (dp[i - 1][j] && s1.charAt(i - 1) == s3.charAt(i + j - 1)) || (dp[i][j - 1] && s2.charAt(j - 1) == s3.charAt(i + j - 1));
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+
+    /**
+     * @param root
+     * @return
+     */
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+
+        TreeNode prev = null;
+
+        TreeNode p = root;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+
+            if (prev != null && prev.val >= p.val) {
+                return false;
+            }
+            prev = p;
+            p = p.right;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 99. Recover Binary Search Tree
+     *
+     * @param root
+     */
+    public void recoverTree(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        TreeNode prev = null;
+        TreeNode first = null;
+        TreeNode second = null;
+        while (!stack.isEmpty() || p != null) {
+            while (p != null) {
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+
+            if (prev != null && prev.val >= p.val) {
+                if (first == null) {
+                    first = prev;
+                }
+                if (first != null) {
+                    second = p;
+                }
+
+            }
+            prev = p;
+            p = p.right;
+        }
+        if (first != null) {
+            int val = first.val;
+            first.val = second.val;
+            second.val = val;
+        }
     }
 
 
