@@ -2,6 +2,11 @@ package org.dora.algorithm.leetcode.v3;
 
 import org.dora.algorithm.datastructe.TreeNode;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author liulu12@xiaomi.com
  * @date 2020/4/6
@@ -55,4 +60,183 @@ public class LeetCodeP1 {
         }
         return isSymmetric(left.left, right.right) && isSymmetric(right.left, left.right);
     }
+
+
+    /**
+     * 102. Binary Tree Level Order Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        LinkedList<TreeNode> list = new LinkedList<>();
+        list.add(root);
+        List<List<Integer>> result = new ArrayList<>();
+        while (!list.isEmpty()) {
+            int size = list.size();
+            List<Integer> tmp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode poll = list.poll();
+                tmp.add(poll.val);
+                if (poll.left != null) {
+                    list.offer(poll.left);
+                }
+                if (poll.right != null) {
+                    list.offer(poll.right);
+                }
+            }
+            result.add(tmp);
+        }
+        return result;
+    }
+
+    /**
+     * 103. Binary Tree Zigzag Level Order Traversal
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        LinkedList<TreeNode> deque = new LinkedList<>();
+        deque.offer(root);
+        boolean leftToRight = true;
+        while (!deque.isEmpty()) {
+            int size = deque.size();
+
+            int[] tmp = new int[size];
+
+            for (int i = 0; i < size; i++) {
+
+                TreeNode poll = deque.poll();
+
+                int index = leftToRight ? i : size - 1 - i;
+
+                tmp[index] = poll.val;
+
+                if (poll.left != null) {
+                    deque.offer(poll.left);
+                }
+                if (poll.right != null) {
+                    deque.offer(poll.right);
+                }
+            }
+            List<Integer> list = new ArrayList<>();
+            for (int num : tmp) {
+                list.add(num);
+            }
+            ans.add(list);
+            leftToRight = !leftToRight;
+        }
+        return ans;
+    }
+
+    /**
+     * 104. Maximum Depth of Binary Tree
+     *
+     * @param root
+     * @return
+     */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+    }
+
+
+    public int maxDepthII(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        HashMap<TreeNode, Integer> hashMap = new HashMap<>();
+        return maxDepthII(hashMap, root);
+    }
+
+    private int maxDepthII(HashMap<TreeNode, Integer> map, TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (map.containsKey(root)) {
+            return map.get(root);
+        }
+        map.put(root, 1);
+        return 1 + Math.max(maxDepthII(map, root.left), maxDepthII(map, root.right));
+    }
+
+
+    /**
+     * 105. Construct Binary Tree from Preorder and Inorder Traversal
+     *
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder == null || inorder == null) {
+            return null;
+        }
+        return intervalBuildTree(0, inorder.length - 1, inorder, 0, preorder);
+    }
+
+    private TreeNode intervalBuildTree(int inStart, int inEnd, int[] inorder, int preStart, int[] preorder) {
+        if (inStart > inEnd || preStart >= preorder.length) {
+            return null;
+        }
+        TreeNode root = new TreeNode(preorder[preStart]);
+
+        int i = inStart;
+        while (i <= inEnd) {
+            if (inorder[i] == root.val) {
+                break;
+            }
+            i = i + 1;
+        }
+        root.left = intervalBuildTree(inStart, i - 1, inorder, preStart + 1, preorder);
+        root.right = intervalBuildTree(inStart + i - inStart + 1, inEnd, inorder, preStart + i - inStart + 1, preorder);
+        return root;
+    }
+
+
+    /**
+     * 106. Construct Binary Tree from Inorder and Postorder Traversal
+     *
+     * @param inorder
+     * @param postorder
+     * @return
+     */
+    public TreeNode buildTreeV2(int[] inorder, int[] postorder) {
+        if (inorder == null || postorder == null) {
+            return null;
+        }
+        return intervalBuildTreeV2(0, inorder.length - 1, inorder, 0, postorder.length - 1, postorder);
+    }
+
+    private TreeNode intervalBuildTreeV2(int inStart, int inEnd, int[] inorder, int postStart, int postEnd, int[] postorder) {
+        if (inStart > inEnd || postStart > postEnd) {
+            return null;
+        }
+        TreeNode root = new TreeNode(postorder[postEnd]);
+
+        int i = inStart;
+        while (i <= inEnd) {
+            if (inorder[i] == root.val) {
+                break;
+            }
+            i++;
+        }
+        root.left = intervalBuildTreeV2(inStart, i - 1, inorder, postStart, postStart + i - inStart - 1, postorder);
+
+        root.right = intervalBuildTreeV2(i + 1, inEnd, inorder, postStart + i - inStart, postEnd - 1, postorder);
+
+        return root;
+    }
+
+
 }
