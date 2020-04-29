@@ -1,5 +1,6 @@
 package org.dora.algorithm.leetcode.v3;
 
+import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.TreeNode;
 
 import java.util.ArrayList;
@@ -13,6 +14,20 @@ import java.util.List;
  */
 public class LeetCodeP1 {
 
+    public static void main(String[] args) {
+        ListNode head = new ListNode(-10);
+
+        head.next = new ListNode(-3);
+
+        head.next.next = new ListNode(0);
+
+        head.next.next.next = new ListNode(5);
+
+        head.next.next.next.next = new ListNode(9);
+
+        LeetCodeP1 p1 = new LeetCodeP1();
+        p1.sortedListToBST(head);
+    }
 
     /**
      * 100. Same Tree
@@ -236,6 +251,107 @@ public class LeetCodeP1 {
         root.right = intervalBuildTreeV2(i + 1, inEnd, inorder, postStart + i - inStart, postEnd - 1, postorder);
 
         return root;
+    }
+
+    /**
+     * 108. Convert Sorted Array to Binary Search Tree
+     *
+     * @param nums
+     * @return
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
+        }
+        return sortedArrayToBST(nums, 0, nums.length - 1);
+    }
+
+    private TreeNode sortedArrayToBST(int[] nums, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = sortedArrayToBST(nums, start, mid - 1);
+        root.right = sortedArrayToBST(nums, mid + 1, end);
+        return root;
+    }
+
+    /**
+     * todo
+     * 109. Convert Sorted List to Binary Search Tree
+     *
+     * @param head
+     * @return
+     */
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        return sortedListToBST(head, null);
+    }
+
+    private TreeNode sortedListToBST(ListNode start, ListNode end) {
+        if (start == end) {
+            return null;
+        }
+        ListNode fast = start;
+        ListNode slow = start;
+        while (fast != end && fast.next != end) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        TreeNode root = new TreeNode(slow.val);
+        root.left = sortedListToBST(start, slow);
+        root.right = sortedListToBST(start.next, end);
+        return root;
+    }
+
+
+    /**
+     * 110. Balanced Binary Tree
+     *
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        int left = maxDepthII(root.left);
+        int right = maxDepthII(root.right);
+        if (Math.abs(left - right) <= 1) {
+            return isBalanced(root.left) && isBalanced(root.right);
+        }
+        return false;
+    }
+
+
+    /**
+     * 111. Minimum Depth of Binary Tree
+     *
+     * @param root
+     * @return
+     */
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.left == null && root.right == null) {
+            return 1;
+        }
+        if (root.left == null) {
+            return 1 + minDepth(root.right);
+        }
+        if (root.right == null) {
+            return 1 + minDepth(root.left);
+        }
+        return 1 + Math.min(minDepth(root.left), minDepth(root.right));
+    }
+
+
+    public boolean hasPathSum(TreeNode root, int sum) {
+
     }
 
 
