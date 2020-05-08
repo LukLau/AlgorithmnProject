@@ -350,8 +350,89 @@ public class LeetCodeP1 {
     }
 
 
+    /**
+     * 112. Path Sum
+     *
+     * @param root
+     * @param sum
+     * @return
+     */
     public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+        if (root.left == null && root.right == null && root.val == sum) {
+            return true;
+        }
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
 
+    /**
+     * 120. Triangle
+     *
+     * @param triangle
+     * @return
+     */
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if (triangle == null || triangle.isEmpty()) {
+            return 0;
+        }
+        int size = triangle.size();
+        List<Integer> dp = triangle.get(size - 1);
+        for (int i = size - 2; i >= 0; i--) {
+            int column = triangle.get(i).size();
+            for (int j = 0; j < column; j++) {
+                int value = Math.min(dp.get(j), dp.get(j + 1)) + triangle.get(i).get(j);
+                dp.set(j, value);
+            }
+        }
+        return dp.get(0);
+    }
+
+
+    /**
+     * 121. Best Time to Buy and Sell Stock
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        int minPrice = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] > minPrice) {
+                result = Math.max(result, prices[i] - minPrice);
+            } else {
+                minPrice = prices[i];
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 122. Best Time to Buy and Sell Stock II
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfitII(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        int minPrice = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            if (minPrice < prices[i]) {
+                result += prices[i] - minPrice;
+            }
+            minPrice = prices[i];
+
+        }
+        return result;
     }
 
 
