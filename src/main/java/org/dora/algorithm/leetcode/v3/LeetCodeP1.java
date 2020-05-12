@@ -436,4 +436,65 @@ public class LeetCodeP1 {
     }
 
 
+    /**
+     * 123. Best Time to Buy and Sell Stock III
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfitIII(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        int column = prices.length;
+
+        int[] left = new int[column];
+
+        int[] right = new int[column + 1];
+
+        int minLeft = prices[0];
+        int leftResult = 0;
+        for (int i = 1; i < column; i++) {
+            if (prices[i] > minLeft) {
+                leftResult = Math.max(leftResult, prices[i] - minLeft);
+            } else {
+                minLeft = prices[i];
+            }
+            left[i] = leftResult;
+        }
+        int minRight = prices[column - 1];
+
+        int rightResult = 0;
+
+        for (int i = column - 2; i >= 0; i--) {
+            if (minRight > prices[i]) {
+                rightResult = Math.max(rightResult, minRight - prices[i]);
+            } else {
+                minRight = prices[i];
+            }
+            right[i] = rightResult;
+        }
+        int result = 0;
+        for (int i = 1; i < column; i++) {
+            result = Math.max(result, left[i] + right[i + 1]);
+        }
+        return result;
+    }
+
+
+    /**
+     * 124. Binary Tree Maximum Path Sum
+     *
+     * @param root
+     * @return
+     */
+    public int maxPathSum(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        maxPathSum(root.left);
+
+    }
+
+
 }
