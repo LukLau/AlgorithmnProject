@@ -3,10 +3,7 @@ package org.dora.algorithm.leetcode.v3;
 import org.dora.algorithm.datastructe.ListNode;
 import org.dora.algorithm.datastructe.TreeNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author liulu12@xiaomi.com
@@ -435,8 +432,40 @@ public class LeetCodeP1 {
         return result;
     }
 
+    /**
+     * 113. Path Sum II
+     *
+     * @param root
+     * @param sum
+     * @return
+     */
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ans = new ArrayList<>();
+        pathSum(ans, new ArrayList<>(), root, sum);
+        return ans;
+    }
+
+    private void pathSum(List<List<Integer>> ans, List<Integer> tmp, TreeNode root, int sum) {
+        tmp.add(root.val);
+        if (root.left == null && root.right == null && root.val == sum) {
+            ans.add(new ArrayList<>(tmp));
+        } else {
+            if (root.left != null) {
+                pathSum(ans, tmp, root.left, sum - root.val);
+            }
+            if (root.right != null) {
+                pathSum(ans, tmp, root.right, sum - root.val);
+            }
+        }
+        tmp.remove(tmp.size() - 1);
+    }
+
 
     /**
+     * <<<<<<< HEAD
      * 123. Best Time to Buy and Sell Stock III
      *
      * @param prices
@@ -481,6 +510,35 @@ public class LeetCodeP1 {
         return result;
     }
 
+    /**
+     * 114. Flatten Binary Tree to Linked List
+     *
+     * @param root
+     */
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode p = root;
+        stack.push(p);
+        TreeNode prev = null;
+        while (!stack.isEmpty()) {
+            TreeNode pop = stack.pop();
+            if (prev != null) {
+                prev.left = null;
+                prev.right = pop;
+            }
+            if (pop.right != null) {
+                stack.push(pop.right);
+            }
+            if (pop.left != null) {
+                stack.push(pop.left);
+            }
+            prev = pop;
+        }
+    }
+
 
     /**
      * 124. Binary Tree Maximum Path Sum
@@ -492,9 +550,6 @@ public class LeetCodeP1 {
         if (root == null) {
             return 0;
         }
-        maxPathSum(root.left);
-
+        return 0;
     }
-
-
 }
