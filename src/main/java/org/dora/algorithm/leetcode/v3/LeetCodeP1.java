@@ -11,6 +11,14 @@ import java.util.*;
  */
 public class LeetCodeP1 {
 
+    /**
+     * 124. Binary Tree Maximum Path Sum
+     *
+     * @param root
+     * @return
+     */
+    private static int maxPathValue = 0;
+
     public static void main(String[] args) {
         ListNode head = new ListNode(-10);
 
@@ -72,7 +80,6 @@ public class LeetCodeP1 {
         }
         return isSymmetric(left.left, right.right) && isSymmetric(right.left, left.right);
     }
-
 
     /**
      * 102. Binary Tree Level Order Traversal
@@ -162,7 +169,6 @@ public class LeetCodeP1 {
         return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
     }
 
-
     public int maxDepthII(TreeNode root) {
         if (root == null) {
             return 0;
@@ -181,7 +187,6 @@ public class LeetCodeP1 {
         map.put(root, 1);
         return 1 + Math.max(maxDepthII(map, root.left), maxDepthII(map, root.right));
     }
-
 
     /**
      * 105. Construct Binary Tree from Preorder and Inorder Traversal
@@ -214,7 +219,6 @@ public class LeetCodeP1 {
         root.right = intervalBuildTree(inStart + i - inStart + 1, inEnd, inorder, preStart + i - inStart + 1, preorder);
         return root;
     }
-
 
     /**
      * 106. Construct Binary Tree from Inorder and Postorder Traversal
@@ -304,7 +308,6 @@ public class LeetCodeP1 {
         return root;
     }
 
-
     /**
      * 110. Balanced Binary Tree
      *
@@ -322,7 +325,6 @@ public class LeetCodeP1 {
         }
         return false;
     }
-
 
     /**
      * 111. Minimum Depth of Binary Tree
@@ -345,7 +347,6 @@ public class LeetCodeP1 {
         }
         return 1 + Math.min(minDepth(root.left), minDepth(root.right));
     }
-
 
     /**
      * 112. Path Sum
@@ -386,7 +387,6 @@ public class LeetCodeP1 {
         return dp.get(0);
     }
 
-
     /**
      * 121. Best Time to Buy and Sell Stock
      *
@@ -408,7 +408,6 @@ public class LeetCodeP1 {
         }
         return result;
     }
-
 
     /**
      * 122. Best Time to Buy and Sell Stock II
@@ -462,7 +461,6 @@ public class LeetCodeP1 {
         }
         tmp.remove(tmp.size() - 1);
     }
-
 
     /**
      * <<<<<<< HEAD
@@ -539,10 +537,8 @@ public class LeetCodeP1 {
         }
     }
 
-
     /**
      * 124. Binary Tree Maximum Path Sum
-     *
      * @param root
      * @return
      */
@@ -550,6 +546,44 @@ public class LeetCodeP1 {
         if (root == null) {
             return 0;
         }
-        return 0;
+        intervalMaxPathSum(root);
+        return maxPathValue;
+
     }
+
+    private int intervalMaxPathSum(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftValue = intervalMaxPathSum(root.left);
+        leftValue = Math.max(leftValue, 0);
+
+        int rightValue = intervalMaxPathSum(root.right);
+        rightValue = Math.max(rightValue, 0);
+
+        maxPathValue = Math.max(maxPathValue, root.val + leftValue + rightValue);
+        return Math.max(leftValue, rightValue) + root.val;
+    }
+
+    /**
+     * 125. Valid Palindrome
+     *
+     * @param s
+     * @return
+     */
+    public boolean isPalindrome(String s) {
+        if (s == null) {
+            return false;
+        }
+        s = s.trim();
+        if (s.isEmpty()) {
+            return false;
+        }
+        int start = 0;
+        int end = s.length() - 1;
+        while (start < end) {
+        }
+        return false;
+    }
+
 }
